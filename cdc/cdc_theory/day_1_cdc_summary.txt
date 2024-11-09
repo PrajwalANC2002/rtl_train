@@ -1,0 +1,15 @@
+yesterday
+morining session
+-CDC
+-Clock domain (classification of signals to different clock domain)
+-types of clock domain (single and multiple clock domain)
+-synchronous vs asynchronus clock
+-asynchronus input and clock
+-cdc issues
+-metastability and different metastabillity scenarios
+-removing metastability
+-different synchronizers for single bit signal(2 FF,3 FF,MUX synchronizers)
+
+afternoon session
+-different synchronizers for multi bit signal (multi bit 2FF,handshake synchronizer,using async FIFO synchronizer)
+-working and block diagram of asynchronous FIFO

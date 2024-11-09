@@ -1,0 +1,1354 @@
+1)
+design:
+module down_counter(clk,reset,load,enable,count);
+input clk,reset,enable,load;
+output reg [3:0] count;
+always@(posedge clk or negedge reset)
+  begin
+if(reset)
+  count<=4'b1111;
+else if(enable)
+  begin
+if(load)
+  count<=4'b0011;
+  else
+  count<=count-1'b1;
+  end
+  end
+  endmodule
+
+  testbench:
+  module down_counter_tb;
+  reg clk,reset,enable,load;
+  wire [3:0] count;
+
+  down_counter dut(clk,reset,load,enable,count);
+  always #1 clk = ~clk;
+
+  initial begin
+  $monitor("clk=%b,reset=%b,count=%b,enable=%b,load=%b",clk,reset,count,enable,load);
+  clk = 1'b0;reset = 1'b1;enable=1'b0;load=1'b0;
+#2 reset=1'b0;enable=1'b1;load=1'b1; 
+#5 load=1'b0;
+#2 enable=1'b0;
+#10 enable=1'b1;load=1'b1;
+#2 load=1'b0;
+#40 reset=1'b1;
+#5 reset=1'b0;
+#40 $finish;
+  end
+  initial begin
+  $dumpfile("dump.vcd");
+  $dumpvars;
+  end
+  endmodule
+
+  output:
+
+  # run 100ns
+# clk=0,reset=1,count=xxxx,enable=0,load=0
+# clk=1,reset=1,count=1111,enable=0,load=0
+# clk=0,reset=0,count=0011,enable=1,load=1
+# clk=1,reset=0,count=0011,enable=1,load=1
+# clk=0,reset=0,count=0011,enable=1,load=1
+# clk=1,reset=0,count=0011,enable=1,load=1
+# clk=0,reset=0,count=0011,enable=1,load=1
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0010,enable=0,load=0
+# clk=0,reset=0,count=0010,enable=0,load=0
+# clk=1,reset=0,count=0010,enable=0,load=0
+# clk=0,reset=0,count=0010,enable=0,load=0
+# clk=1,reset=0,count=0010,enable=0,load=0
+# clk=0,reset=0,count=0010,enable=0,load=0
+# clk=1,reset=0,count=0010,enable=0,load=0
+# clk=0,reset=0,count=0010,enable=0,load=0
+# clk=1,reset=0,count=0010,enable=0,load=0
+# clk=0,reset=0,count=0010,enable=0,load=0
+# clk=1,reset=0,count=0011,enable=1,load=1
+# clk=0,reset=0,count=0011,enable=1,load=1
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0001,enable=1,load=0
+# clk=0,reset=0,count=0001,enable=1,load=0
+# clk=1,reset=0,count=0000,enable=1,load=0
+# clk=0,reset=0,count=0000,enable=1,load=0
+# clk=1,reset=0,count=1111,enable=1,load=0
+# clk=0,reset=0,count=1111,enable=1,load=0
+# clk=1,reset=0,count=1110,enable=1,load=0
+# clk=0,reset=0,count=1110,enable=1,load=0
+# clk=1,reset=0,count=1101,enable=1,load=0
+# clk=0,reset=0,count=1101,enable=1,load=0
+# clk=1,reset=0,count=1100,enable=1,load=0
+# clk=0,reset=0,count=1100,enable=1,load=0
+# clk=1,reset=0,count=1011,enable=1,load=0
+# clk=0,reset=0,count=1011,enable=1,load=0
+# clk=1,reset=0,count=1010,enable=1,load=0
+# clk=0,reset=0,count=1010,enable=1,load=0
+# clk=1,reset=0,count=1001,enable=1,load=0
+# clk=0,reset=0,count=1001,enable=1,load=0
+# clk=1,reset=0,count=1000,enable=1,load=0
+# clk=0,reset=0,count=1000,enable=1,load=0
+# clk=1,reset=0,count=0111,enable=1,load=0
+# clk=0,reset=0,count=0111,enable=1,load=0
+# clk=1,reset=0,count=0110,enable=1,load=0
+# clk=0,reset=0,count=0110,enable=1,load=0
+# clk=1,reset=0,count=0101,enable=1,load=0
+# clk=0,reset=0,count=0101,enable=1,load=0
+# clk=1,reset=0,count=0100,enable=1,load=0
+# clk=0,reset=0,count=0100,enable=1,load=0
+# clk=1,reset=0,count=0011,enable=1,load=0
+# clk=0,reset=0,count=0011,enable=1,load=0
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0001,enable=1,load=0
+# clk=0,reset=0,count=0001,enable=1,load=0
+# clk=1,reset=0,count=0000,enable=1,load=0
+# clk=0,reset=0,count=0000,enable=1,load=0
+# clk=1,reset=0,count=1111,enable=1,load=0
+# clk=0,reset=0,count=1111,enable=1,load=0
+# clk=1,reset=1,count=1111,enable=1,load=0
+# clk=0,reset=1,count=1111,enable=1,load=0
+# clk=1,reset=1,count=1111,enable=1,load=0
+# clk=0,reset=1,count=1111,enable=1,load=0
+# clk=1,reset=1,count=1111,enable=1,load=0
+# clk=0,reset=0,count=1110,enable=1,load=0
+# clk=1,reset=0,count=1101,enable=1,load=0
+# clk=0,reset=0,count=1101,enable=1,load=0
+# clk=1,reset=0,count=1100,enable=1,load=0
+# clk=0,reset=0,count=1100,enable=1,load=0
+# clk=1,reset=0,count=1011,enable=1,load=0
+# clk=0,reset=0,count=1011,enable=1,load=0
+# clk=1,reset=0,count=1010,enable=1,load=0
+# clk=0,reset=0,count=1010,enable=1,load=0
+# clk=1,reset=0,count=1001,enable=1,load=0
+# clk=0,reset=0,count=1001,enable=1,load=0
+# clk=1,reset=0,count=1000,enable=1,load=0
+# clk=0,reset=0,count=1000,enable=1,load=0
+# clk=1,reset=0,count=0111,enable=1,load=0
+# clk=0,reset=0,count=0111,enable=1,load=0
+# clk=1,reset=0,count=0110,enable=1,load=0
+# clk=0,reset=0,count=0110,enable=1,load=0
+# clk=1,reset=0,count=0101,enable=1,load=0
+# clk=0,reset=0,count=0101,enable=1,load=0
+# clk=1,reset=0,count=0100,enable=1,load=0
+# clk=0,reset=0,count=0100,enable=1,load=0
+# clk=1,reset=0,count=0011,enable=1,load=0
+# clk=0,reset=0,count=0011,enable=1,load=0
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0001,enable=1,load=0
+# clk=0,reset=0,count=0001,enable=1,load=0
+# clk=1,reset=0,count=0000,enable=1,load=0
+# clk=0,reset=0,count=0000,enable=1,load=0
+# clk=1,reset=0,count=1111,enable=1,load=0
+# clk=0,reset=0,count=1111,enable=1,load=0
+# clk=1,reset=0,count=1110,enable=1,load=0
+# clk=0,reset=0,count=1110,enable=1,load=0
+# clk=1,reset=0,count=1101,enable=1,load=0
+# exit
+
+
+2)
+
+design:
+module up_counter(clk,reset,load,enable,count);
+input clk,reset,enable,load;
+output reg [3:0] count;
+always@(posedge clk or negedge reset)
+  begin
+if(reset)
+  count<=4'b0000;
+else if(enable)
+  begin
+if(load)
+  count<=4'b1001;
+  else
+  count<=count+1'b1;
+  end
+  end
+  endmodule
+testbench:
+
+module up_counter_tb;
+reg clk,reset,enable,load;
+wire [3:0] count;
+
+up_counter dut(clk,reset,load,enable,count);
+always #1 clk = ~clk;
+
+initial begin
+$monitor("clk=%b,reset=%b,count=%b,enable=%b,load=%b",clk,reset,count,enable,load);
+clk = 1'b0;reset = 1'b1;enable=1'b0;load=1'b0;
+#2 reset=1'b0;enable=1'b1;load=1'b1; 
+#5 load=1'b0;
+#2 enable=1'b0;
+#10 enable=1'b1;load=1'b1;
+#2 load=1'b0;
+#25 reset=1'b1;
+#2 reset=1'b0;
+#80 $finish;
+end
+initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+end
+endmodule
+
+output:
+# run 100ns
+# clk=0,reset=1,count=xxxx,enable=0,load=0
+# clk=1,reset=1,count=0000,enable=0,load=0
+# clk=0,reset=0,count=1001,enable=1,load=1
+# clk=1,reset=0,count=1001,enable=1,load=1
+# clk=0,reset=0,count=1001,enable=1,load=1
+# clk=1,reset=0,count=1001,enable=1,load=1
+# clk=0,reset=0,count=1001,enable=1,load=1
+# clk=1,reset=0,count=1010,enable=1,load=0
+# clk=0,reset=0,count=1010,enable=1,load=0
+# clk=1,reset=0,count=1010,enable=0,load=0
+# clk=0,reset=0,count=1010,enable=0,load=0
+# clk=1,reset=0,count=1010,enable=0,load=0
+# clk=0,reset=0,count=1010,enable=0,load=0
+# clk=1,reset=0,count=1010,enable=0,load=0
+# clk=0,reset=0,count=1010,enable=0,load=0
+# clk=1,reset=0,count=1010,enable=0,load=0
+# clk=0,reset=0,count=1010,enable=0,load=0
+# clk=1,reset=0,count=1010,enable=0,load=0
+# clk=0,reset=0,count=1010,enable=0,load=0
+# clk=1,reset=0,count=1001,enable=1,load=1
+# clk=0,reset=0,count=1001,enable=1,load=1
+# clk=1,reset=0,count=1010,enable=1,load=0
+# clk=0,reset=0,count=1010,enable=1,load=0
+# clk=1,reset=0,count=1011,enable=1,load=0
+# clk=0,reset=0,count=1011,enable=1,load=0
+# clk=1,reset=0,count=1100,enable=1,load=0
+# clk=0,reset=0,count=1100,enable=1,load=0
+# clk=1,reset=0,count=1101,enable=1,load=0
+# clk=0,reset=0,count=1101,enable=1,load=0
+# clk=1,reset=0,count=1110,enable=1,load=0
+# clk=0,reset=0,count=1110,enable=1,load=0
+# clk=1,reset=0,count=1111,enable=1,load=0
+# clk=0,reset=0,count=1111,enable=1,load=0
+# clk=1,reset=0,count=0000,enable=1,load=0
+# clk=0,reset=0,count=0000,enable=1,load=0
+# clk=1,reset=0,count=0001,enable=1,load=0
+# clk=0,reset=0,count=0001,enable=1,load=0
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0011,enable=1,load=0
+# clk=0,reset=0,count=0011,enable=1,load=0
+# clk=1,reset=0,count=0100,enable=1,load=0
+# clk=0,reset=0,count=0100,enable=1,load=0
+# clk=1,reset=0,count=0101,enable=1,load=0
+# clk=0,reset=0,count=0101,enable=1,load=0
+# clk=1,reset=0,count=0110,enable=1,load=0
+# clk=0,reset=1,count=0110,enable=1,load=0
+# clk=1,reset=1,count=0000,enable=1,load=0
+# clk=0,reset=0,count=0001,enable=1,load=0
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0011,enable=1,load=0
+# clk=0,reset=0,count=0011,enable=1,load=0
+# clk=1,reset=0,count=0100,enable=1,load=0
+# clk=0,reset=0,count=0100,enable=1,load=0
+# clk=1,reset=0,count=0101,enable=1,load=0
+# clk=0,reset=0,count=0101,enable=1,load=0
+# clk=1,reset=0,count=0110,enable=1,load=0
+# clk=0,reset=0,count=0110,enable=1,load=0
+# clk=1,reset=0,count=0111,enable=1,load=0
+# clk=0,reset=0,count=0111,enable=1,load=0
+# clk=1,reset=0,count=1000,enable=1,load=0
+# clk=0,reset=0,count=1000,enable=1,load=0
+# clk=1,reset=0,count=1001,enable=1,load=0
+# clk=0,reset=0,count=1001,enable=1,load=0
+# clk=1,reset=0,count=1010,enable=1,load=0
+# clk=0,reset=0,count=1010,enable=1,load=0
+# clk=1,reset=0,count=1011,enable=1,load=0
+# clk=0,reset=0,count=1011,enable=1,load=0
+# clk=1,reset=0,count=1100,enable=1,load=0
+# clk=0,reset=0,count=1100,enable=1,load=0
+# clk=1,reset=0,count=1101,enable=1,load=0
+# clk=0,reset=0,count=1101,enable=1,load=0
+# clk=1,reset=0,count=1110,enable=1,load=0
+# clk=0,reset=0,count=1110,enable=1,load=0
+# clk=1,reset=0,count=1111,enable=1,load=0
+# clk=0,reset=0,count=1111,enable=1,load=0
+# clk=1,reset=0,count=0000,enable=1,load=0
+# clk=0,reset=0,count=0000,enable=1,load=0
+# clk=1,reset=0,count=0001,enable=1,load=0
+# clk=0,reset=0,count=0001,enable=1,load=0
+# clk=1,reset=0,count=0010,enable=1,load=0
+# clk=0,reset=0,count=0010,enable=1,load=0
+# clk=1,reset=0,count=0011,enable=1,load=0
+# clk=0,reset=0,count=0011,enable=1,load=0
+# clk=1,reset=0,count=0100,enable=1,load=0
+# clk=0,reset=0,count=0100,enable=1,load=0
+# clk=1,reset=0,count=0101,enable=1,load=0
+# clk=0,reset=0,count=0101,enable=1,load=0
+# clk=1,reset=0,count=0110,enable=1,load=0
+# clk=0,reset=0,count=0110,enable=1,load=0
+# clk=1,reset=0,count=0111,enable=1,load=0
+# clk=0,reset=0,count=0111,enable=1,load=0
+# clk=1,reset=0,count=1000,enable=1,load=0
+# clk=0,reset=0,count=1000,enable=1,load=0
+# clk=1,reset=0,count=1001,enable=1,load=0
+# clk=0,reset=0,count=1001,enable=1,load=0
+# clk=1,reset=0,count=1010,enable=1,load=0
+# clk=0,reset=0,count=1010,enable=1,load=0
+# clk=1,reset=0,count=1011,enable=1,load=0
+# exit
+
+3)
+design:
+module up_down_counter(clk,reset,up_down,enable,load,count);
+input clk,reset,up_down,enable,load;
+output reg [3:0] count;
+always@(posedge clk or negedge reset)
+  begin
+if(up_down)
+  begin
+if(reset)
+  count=4'b0000;
+else if(enable)
+  begin
+if(load)
+  count=4'b1001;
+  else
+  count=count+1'b1;
+  end
+  end
+else if(!up_down)
+  begin
+if(reset)
+  count=4'b1111;
+else if(enable)
+  begin
+if(load)
+  count=4'b0011;
+  else
+  count=count-1'b1;
+  end
+  end
+  end
+  endmodule
+
+  testbench:
+  module up_down_counter_tb;
+  reg clk,reset,up_down,enable,load;
+  wire [3:0] count;
+
+  up_down_counter dut (clk,reset,up_down,enable,load,count);
+  always #1 clk = ~clk;
+
+  initial begin
+  clk = 1'b0;
+  up_down=1'b0;
+  enable=1'b0;
+  load=1'b0;
+  reset=1'b0;
+  $monitor("clk=%b,reset=%b,up_down=%b,load=%b,enable=%b,count=%b",clk,reset,up_down,load,enable,count); 
+#1 up_down=1;//upcount
+#1 reset=1'b1;//to check if the counter resets to 0000 during upcount
+#5 reset=1'b0;enable=1'b1;load=1'b0;//to check if the up count happens when enable is 1
+#25 load=1'b1;//to check if the value 1001 is loaded
+#5 up_down=0;load=1'b0;//down count
+#20 reset=1'b1;//to check if the counter resets to 1111 during downcount
+#5 reset=1'b0;enable=1'b1;load=1'b0;//to check if the down count happens when enable is 1
+#25 load=1'b1;//to check if the value 0011 is loaded
+#32 $finish;
+  end
+  initial begin
+  $dumpfile("dump.vcd");
+  $dumpvars;
+  end
+  endmodule
+
+  output:
+  # run 100ns
+# clk=0,reset=0,up_down=0,load=0,enable=0,count=xxxx
+# clk=1,reset=0,up_down=1,load=0,enable=0,count=xxxx
+# clk=0,reset=1,up_down=1,load=0,enable=0,count=xxxx
+# clk=1,reset=1,up_down=1,load=0,enable=0,count=0000
+# clk=0,reset=1,up_down=1,load=0,enable=0,count=0000
+# clk=1,reset=1,up_down=1,load=0,enable=0,count=0000
+# clk=0,reset=1,up_down=1,load=0,enable=0,count=0000
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0001
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0001
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0010
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0010
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0011
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0011
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0100
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0100
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0101
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0101
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0110
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0110
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=0111
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=0111
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=1000
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=1000
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=1001
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=1001
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=1010
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=1010
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=1011
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=1011
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=1100
+# clk=0,reset=0,up_down=1,load=0,enable=1,count=1100
+# clk=1,reset=0,up_down=1,load=0,enable=1,count=1101
+# clk=0,reset=0,up_down=1,load=1,enable=1,count=1101
+# clk=1,reset=0,up_down=1,load=1,enable=1,count=1001
+# clk=0,reset=0,up_down=1,load=1,enable=1,count=1001
+# clk=1,reset=0,up_down=1,load=1,enable=1,count=1001
+# clk=0,reset=0,up_down=1,load=1,enable=1,count=1001
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1000
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1000
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0111
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0111
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0110
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0110
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0101
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0101
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0100
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0100
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0010
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0010
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0001
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0001
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0000
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0000
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1111
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1111
+# clk=1,reset=1,up_down=0,load=0,enable=1,count=1111
+# clk=0,reset=1,up_down=0,load=0,enable=1,count=1111
+# clk=1,reset=1,up_down=0,load=0,enable=1,count=1111
+# clk=0,reset=1,up_down=0,load=0,enable=1,count=1111
+# clk=1,reset=1,up_down=0,load=0,enable=1,count=1111
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1110
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1101
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1101
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1100
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1100
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1011
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1011
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1010
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1010
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1001
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1001
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=1000
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=1000
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0111
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0111
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0110
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0110
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0101
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0101
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0100
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0100
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=0,enable=1,count=0010
+# clk=0,reset=0,up_down=0,load=0,enable=1,count=0010
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=0,reset=0,up_down=0,load=1,enable=1,count=0011
+# clk=1,reset=0,up_down=0,load=1,enable=1,count=0011
+# exit
+
+  4)
+design:
+  module up_down_bit_counter(clk,reset,up_down,load,count);
+  input clk,reset,up_down,load;
+  parameter width=32;
+  //parameter width=16;
+  //parameter width=8;
+  parameter data_in=8'd250;
+  output reg [width-1:0] count;
+always@(posedge clk or negedge reset)
+  begin
+if(reset)
+  count<=0;
+else if(up_down)
+  begin
+if(load)
+  count=data_in;
+  else
+  count=count+1'b1;
+  end
+else if(!up_down)
+  begin
+if(load)
+  count=data_in;
+  else
+  count=count-1'b1;
+  end
+  end
+  endmodule
+  
+  testbench:
+  module up_down_bit_counter_tb;
+  reg clk,reset,up_down,load;
+  parameter width=32;
+  //parameter width=16;
+  //parameter width=8;
+  wire [width-1:0] count;
+
+  up_down_bit_counter dut (clk,reset,up_down,load,count);
+  always #1 clk = ~clk;
+
+  initial begin
+  clk = 1'b0;up_down=1'b0;load=1'b0;reset=1'b1;
+  $monitor("clk=%b,reset=%b,up_down=%b,load=%b,count=%b",clk,reset,up_down,load,count); 
+#2 reset=1'b0;up_down=1'b1;load=1'b0;
+#10 load=1'b1;//to load the value of data_in
+#5 up_down=0;load=1'b0;//down count
+#20 reset=1'b1;//to check if the counter resets to 0 during downcount
+#5 reset=1'b0;load=1'b0;//to check if the down count happens when enable is 1
+#25 load=1'b1;//to check if the value of data_in is loaded
+#32 $finish;
+  end
+  initial begin
+  $dumpfile("dump.vcd");
+  $dumpvars;
+  end
+  endmodule
+
+  5)
+
+  design:
+  module siso(clk, reset_n, SI, SO);
+  parameter WIDTH = 32;
+  input clk, reset_n, SI;
+  output SO;
+  reg [WIDTH-1:0] shreg;
+  integer i;
+always @(posedge clk or negedge reset_n)
+  begin
+  if (~reset_n)shreg=0;
+  else
+  begin
+  for (i = 0; i < WIDTH-1; i = i+1)
+  shreg[i+1] <= shreg[i];
+  shreg[0] <= SI;
+  end
+  end 
+  assign SO = shreg[WIDTH-1];
+  endmodule
+
+  testbench:
+  module siso_tb;
+  reg clk, SI,reset_n;
+  wire SO;
+  siso dut(clk,reset_n, SI, SO); 
+  always #1 clk=~clk;
+  initial fork
+  clk = 0;
+  reset_n = 0;
+  SI = 0;
+  $monitor("Time=%t, clk=%b, reset_n=%b, SI=%b, SO=%b", $time, clk, reset_n, SI, SO);
+
+#5 reset_n = 1;
+
+#10 SI = 1;/*21 bit serial input */ 
+#12 SI = 0; 
+#14 SI = 1; 
+#16 SI = 0; 
+#10 SI = 1; 
+#12 SI = 0; 
+#14 SI = 1; 
+#16 SI = 0; 
+#18 SI = 1; 
+#20 SI = 0; 
+#22 SI = 1; 
+#24 SI = 0; 
+#26 SI = 1; 
+#28 SI = 0; 
+#30 SI = 1; 
+#32 SI = 0; 
+#34 SI = 1; 
+#36 SI = 1; 
+#38 SI = 1; 
+#40 SI = 1; 
+#42 SI = 0;
+
+#300 $finish;
+  join
+  initial begin
+  $dumpfile("dump.vcd"); 
+  $dumpvars();
+  end
+
+  endmodule
+
+output:
+# run 300ns
+# Time=                   0, clk=0, reset_n=0, SI=0, SO=0
+# Time=                   1, clk=1, reset_n=0, SI=0, SO=0
+# Time=                   2, clk=0, reset_n=0, SI=0, SO=0
+# Time=                   3, clk=1, reset_n=0, SI=0, SO=0
+# Time=                   4, clk=0, reset_n=0, SI=0, SO=0
+# Time=                   5, clk=1, reset_n=1, SI=0, SO=0
+# Time=                   6, clk=0, reset_n=1, SI=0, SO=0
+# Time=                   7, clk=1, reset_n=1, SI=0, SO=0
+# Time=                   8, clk=0, reset_n=1, SI=0, SO=0
+# Time=                   9, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  10, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  11, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  12, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  13, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  14, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  15, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  16, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  17, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  18, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  19, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  20, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  21, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  22, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  23, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  24, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  25, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  26, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  27, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  28, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  29, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  30, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  31, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  32, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  33, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  34, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  35, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  36, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  37, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  38, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  39, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  40, clk=0, reset_n=1, SI=1, SO=0
+# Time=                  41, clk=1, reset_n=1, SI=1, SO=0
+# Time=                  42, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  43, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  44, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  45, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  46, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  47, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  48, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  49, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  50, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  51, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  52, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  53, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  54, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  55, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  56, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  57, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  58, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  59, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  60, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  61, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  62, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  63, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  64, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  65, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  66, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  67, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  68, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  69, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  70, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  71, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  72, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  73, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  74, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  75, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  76, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  77, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  78, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  79, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  80, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  81, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  82, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  83, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  84, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  85, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  86, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  87, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  88, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  89, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  90, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  91, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  92, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  93, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  94, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  95, clk=1, reset_n=1, SI=0, SO=0
+# Time=                  96, clk=0, reset_n=1, SI=0, SO=0
+# Time=                  97, clk=1, reset_n=1, SI=0, SO=1
+# Time=                  98, clk=0, reset_n=1, SI=0, SO=1
+# Time=                  99, clk=1, reset_n=1, SI=0, SO=1
+# Time=                 100, clk=0, reset_n=1, SI=0, SO=1
+# Time=                 101, clk=1, reset_n=1, SI=0, SO=1
+# Time=                 102, clk=0, reset_n=1, SI=0, SO=1
+# Time=                 103, clk=1, reset_n=1, SI=0, SO=1
+# Time=                 104, clk=0, reset_n=1, SI=0, SO=1
+# Time=                 105, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 106, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 107, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 108, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 109, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 110, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 111, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 112, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 113, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 114, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 115, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 116, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 117, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 118, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 119, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 120, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 121, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 122, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 123, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 124, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 125, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 126, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 127, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 128, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 129, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 130, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 131, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 132, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 133, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 134, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 135, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 136, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 137, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 138, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 139, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 140, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 141, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 142, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 143, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 144, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 145, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 146, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 147, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 148, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 149, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 150, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 151, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 152, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 153, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 154, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 155, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 156, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 157, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 158, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 159, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 160, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 161, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 162, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 163, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 164, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 165, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 166, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 167, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 168, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 169, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 170, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 171, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 172, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 173, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 174, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 175, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 176, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 177, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 178, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 179, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 180, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 181, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 182, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 183, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 184, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 185, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 186, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 187, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 188, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 189, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 190, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 191, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 192, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 193, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 194, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 195, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 196, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 197, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 198, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 199, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 200, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 201, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 202, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 203, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 204, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 205, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 206, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 207, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 208, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 209, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 210, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 211, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 212, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 213, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 214, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 215, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 216, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 217, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 218, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 219, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 220, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 221, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 222, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 223, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 224, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 225, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 226, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 227, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 228, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 229, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 230, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 231, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 232, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 233, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 234, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 235, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 236, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 237, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 238, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 239, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 240, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 241, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 242, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 243, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 244, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 245, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 246, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 247, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 248, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 249, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 250, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 251, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 252, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 253, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 254, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 255, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 256, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 257, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 258, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 259, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 260, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 261, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 262, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 263, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 264, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 265, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 266, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 267, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 268, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 269, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 270, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 271, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 272, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 273, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 274, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 275, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 276, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 277, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 278, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 279, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 280, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 281, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 282, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 283, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 284, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 285, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 286, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 287, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 288, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 289, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 290, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 291, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 292, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 293, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 294, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 295, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 296, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 297, clk=1, reset_n=1, SI=0, SO=0
+# Time=                 298, clk=0, reset_n=1, SI=0, SO=0
+# Time=                 299, clk=1, reset_n=1, SI=0, SO=0
+# ** Note: $finish    : testbench.sv(36)
+
+6)
+design:
+module sipo(clk, reset_n, SI, SO);
+parameter WIDTH = 32;
+input clk, reset_n, SI;
+output reg [WIDTH-1:0] SO;
+reg [WIDTH-1:0] shreg;
+integer i;
+always @(posedge clk)
+  begin
+  if (~reset_n)shreg<=0;
+  else
+  begin
+  for (i = 0; i < WIDTH-1; i = i+1)
+  shreg[i+1] <= shreg[i];
+  shreg[0] <= SI;
+  end
+  end
+  assign SO=shreg;
+  endmodule
+
+  testbench:
+  module sipo_tb;
+  reg clk, SI,reset_n;
+  parameter WIDTH=32;
+  wire [WIDTH-1:0] SO;
+  sipo dut(clk,reset_n, SI, SO); 
+  always #1 clk=~clk;
+  initial fork
+  clk = 1'b0;
+  reset_n = 0;
+  $monitor("Time=%t, clk=%b, reset_n=%b, SI=%b, SO=%b", $time, clk, reset_n, SI, SO);
+
+#1 reset_n = 1;
+
+#2 SI = 1;/*32 bit serial input */ 
+#4 SI = 0; 
+#6 SI = 1; 
+#8 SI = 0; 
+#10 SI = 1; 
+#12 SI = 0; 
+#14 SI = 1; 
+#16 SI = 0; 
+#18 SI = 1; 
+#20 SI = 0; 
+#22 SI = 1; 
+#24 SI = 0; 
+#26 SI = 1; 
+#28 SI = 0; 
+#30 SI = 1; 
+#32 SI = 0; 
+#34 SI = 1; 
+#36 SI = 1; 
+#38 SI = 1; 
+#40 SI = 1; 
+#42 SI = 0;
+#44 SI = 1; 
+#46 SI = 1; 
+#48 SI = 1; 
+#50 SI = 1; 
+#52 SI = 0;
+#54 SI = 1; 
+#56 SI = 1; 
+#58 SI = 1; 
+#60 SI = 1; 
+#62 SI = 0;
+#64 SI = 1;
+
+#66 $finish;
+  join
+  initial begin
+  $dumpfile("dump.vcd"); 
+  $dumpvars();
+  end
+
+  endmodule
+
+
+  output:
+  # run 300ns
+# Time=                   0, clk=0, reset_n=0, SI=x, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Time=                   1, clk=1, reset_n=1, SI=x, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Time=                   2, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Time=                   3, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1
+# Time=                   4, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx1
+# Time=                   5, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx10
+# Time=                   6, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx10
+# Time=                   7, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx101
+# Time=                   8, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx101
+# Time=                   9, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxx1010
+# Time=                  10, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxx1010
+# Time=                  11, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxx10101
+# Time=                  12, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxx10101
+# Time=                  13, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxxx101010
+# Time=                  14, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxxx101010
+# Time=                  15, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxxx1010101
+# Time=                  16, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxxx1010101
+# Time=                  17, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxxx10101010
+# Time=                  18, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxxx10101010
+# Time=                  19, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxxx101010101
+# Time=                  20, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxxx101010101
+# Time=                  21, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxxx1010101010
+# Time=                  22, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxxx1010101010
+# Time=                  23, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxxx10101010101
+# Time=                  24, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxxx10101010101
+# Time=                  25, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxxx101010101010
+# Time=                  26, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxxx101010101010
+# Time=                  27, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxxx1010101010101
+# Time=                  28, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxxx1010101010101
+# Time=                  29, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxxx10101010101010
+# Time=                  30, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxxx10101010101010
+# Time=                  31, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxxx101010101010101
+# Time=                  32, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxxx101010101010101
+# Time=                  33, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxxxxxxx1010101010101010
+# Time=                  34, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxxx1010101010101010
+# Time=                  35, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxx10101010101010101
+# Time=                  36, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxxx10101010101010101
+# Time=                  37, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxxx101010101010101011
+# Time=                  38, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxxx101010101010101011
+# Time=                  39, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxxx1010101010101010111
+# Time=                  40, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxxxx1010101010101010111
+# Time=                  41, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxxxx10101010101010101111
+# Time=                  42, clk=0, reset_n=1, SI=0, SO=xxxxxxxxxxxx10101010101010101111
+# Time=                  43, clk=1, reset_n=1, SI=0, SO=xxxxxxxxxxx101010101010101011110
+# Time=                  44, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxxx101010101010101011110
+# Time=                  45, clk=1, reset_n=1, SI=1, SO=xxxxxxxxxx1010101010101010111101
+# Time=                  46, clk=0, reset_n=1, SI=1, SO=xxxxxxxxxx1010101010101010111101
+# Time=                  47, clk=1, reset_n=1, SI=1, SO=xxxxxxxxx10101010101010101111011
+# Time=                  48, clk=0, reset_n=1, SI=1, SO=xxxxxxxxx10101010101010101111011
+# Time=                  49, clk=1, reset_n=1, SI=1, SO=xxxxxxxx101010101010101011110111
+# Time=                  50, clk=0, reset_n=1, SI=1, SO=xxxxxxxx101010101010101011110111
+# Time=                  51, clk=1, reset_n=1, SI=1, SO=xxxxxxx1010101010101010111101111
+# Time=                  52, clk=0, reset_n=1, SI=0, SO=xxxxxxx1010101010101010111101111
+# Time=                  53, clk=1, reset_n=1, SI=0, SO=xxxxxx10101010101010101111011110
+# Time=                  54, clk=0, reset_n=1, SI=1, SO=xxxxxx10101010101010101111011110
+# Time=                  55, clk=1, reset_n=1, SI=1, SO=xxxxx101010101010101011110111101
+# Time=                  56, clk=0, reset_n=1, SI=1, SO=xxxxx101010101010101011110111101
+# Time=                  57, clk=1, reset_n=1, SI=1, SO=xxxx1010101010101010111101111011
+# Time=                  58, clk=0, reset_n=1, SI=1, SO=xxxx1010101010101010111101111011
+# Time=                  59, clk=1, reset_n=1, SI=1, SO=xxx10101010101010101111011110111
+# Time=                  60, clk=0, reset_n=1, SI=1, SO=xxx10101010101010101111011110111
+# Time=                  61, clk=1, reset_n=1, SI=1, SO=xx101010101010101011110111101111
+# Time=                  62, clk=0, reset_n=1, SI=0, SO=xx101010101010101011110111101111
+# Time=                  63, clk=1, reset_n=1, SI=0, SO=x1010101010101010111101111011110
+# Time=                  64, clk=0, reset_n=1, SI=1, SO=x1010101010101010111101111011110
+# Time=                  65, clk=1, reset_n=1, SI=1, SO=10101010101010101111011110111101
+
+
+  7)
+  design:
+  module pipo (clk, reset, SI, SO);
+  parameter WIDTH = 32;
+  input clk, reset;
+  input [WIDTH-1:0] SI;
+  output reg [WIDTH-1:0] SO;
+always @(posedge clk)
+  begin
+  if (reset)SO<=0;
+  else
+  SO<=SI;
+  end
+  endmodule
+
+  testbench:
+  module pipo_tb;
+  reg clk,reset;
+  parameter WIDTH=32;
+  reg [WIDTH-1:0] SI;
+  wire [WIDTH-1:0] SO;
+  pipo dut(clk,reset, SI, SO); 
+  always #1 clk=~clk;
+  initial fork
+  clk = 1'b0;
+  reset = 1;
+  $monitor("Time=%t, clk=%b, reset=%b, SI=%b, SO=%b", $time, clk, reset, SI, SO);
+
+#5 reset = 0;
+#5 SI=32'b10101111111101101111111111010100;
+#10 SI=32'b11111000001111111000000000000011;
+#15 reset=1'b1;
+#20 reset=1'b0;
+#66 $finish;
+  join
+  initial begin
+  $dumpfile("dump.vcd"); 
+  $dumpvars();
+  end
+
+  endmodule
+
+  output:
+  # run 100ns
+# Time=                   0, clk=0, reset=1, SI=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, SO=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# Time=                   1, clk=1, reset=1, SI=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, SO=00000000000000000000000000000000
+# Time=                   2, clk=0, reset=1, SI=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, SO=00000000000000000000000000000000
+# Time=                   3, clk=1, reset=1, SI=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, SO=00000000000000000000000000000000
+# Time=                   4, clk=0, reset=1, SI=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx, SO=00000000000000000000000000000000
+# Time=                   5, clk=1, reset=0, SI=10101111111101101111111111010100, SO=10101111111101101111111111010100
+# Time=                   6, clk=0, reset=0, SI=10101111111101101111111111010100, SO=10101111111101101111111111010100
+# Time=                   7, clk=1, reset=0, SI=10101111111101101111111111010100, SO=10101111111101101111111111010100
+# Time=                   8, clk=0, reset=0, SI=10101111111101101111111111010100, SO=10101111111101101111111111010100
+# Time=                   9, clk=1, reset=0, SI=10101111111101101111111111010100, SO=10101111111101101111111111010100
+# Time=                  10, clk=0, reset=0, SI=11111000001111111000000000000011, SO=10101111111101101111111111010100
+# Time=                  11, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  12, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  13, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  14, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  15, clk=1, reset=1, SI=11111000001111111000000000000011, SO=00000000000000000000000000000000
+# Time=                  16, clk=0, reset=1, SI=11111000001111111000000000000011, SO=00000000000000000000000000000000
+# Time=                  17, clk=1, reset=1, SI=11111000001111111000000000000011, SO=00000000000000000000000000000000
+# Time=                  18, clk=0, reset=1, SI=11111000001111111000000000000011, SO=00000000000000000000000000000000
+# Time=                  19, clk=1, reset=1, SI=11111000001111111000000000000011, SO=00000000000000000000000000000000
+# Time=                  20, clk=0, reset=0, SI=11111000001111111000000000000011, SO=00000000000000000000000000000000
+# Time=                  21, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  22, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  23, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  24, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  25, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  26, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  27, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  28, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  29, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  30, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  31, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  32, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  33, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  34, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  35, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  36, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  37, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  38, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  39, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  40, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  41, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  42, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  43, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  44, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  45, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  46, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  47, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  48, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  49, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  50, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  51, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  52, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  53, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  54, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  55, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  56, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  57, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  58, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  59, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  60, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  61, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  62, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  63, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  64, clk=0, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+# Time=                  65, clk=1, reset=0, SI=11111000001111111000000000000011, SO=11111000001111111000000000000011
+
+  8)
+  design:
+  module fib(clk,rst,out);
+  input clk,rst;
+  output reg [31:0]out;
+  reg [31:0]a,b;
+always@(posedge clk)
+  begin
+if(rst)
+  begin
+  a<=0;
+  b<=1;
+  end
+  else
+  begin
+  a<=a+b;
+  b<=a;
+  end
+  out=a;
+  end
+  endmodule
+
+  testbench:
+  module fib_tb;
+  reg clk,rst;
+  wire [31:0]out;
+  fib dut(clk,rst,out);
+  always #1 clk=~clk;
+  initial begin
+  $monitor("clk=%b,rst=%b,out=%d",clk,rst,out);
+  clk=1'b0;rst=1'b1;
+#5 rst=1'b0;
+#70 rst=1'b1;
+#5 rst=1'b0;
+#30 $finish;
+  end
+  endmodule
+
+  output:
+  # run -all
+# clk=0,rst=1,out=         x
+# clk=1,rst=1,out=         x
+# clk=0,rst=1,out=         x
+# clk=1,rst=1,out=         0
+# clk=0,rst=1,out=         0
+# clk=1,rst=0,out=         0
+# clk=0,rst=0,out=         0
+# clk=1,rst=0,out=         1
+# clk=0,rst=0,out=         1
+# clk=1,rst=0,out=         1
+# clk=0,rst=0,out=         1
+# clk=1,rst=0,out=         2
+# clk=0,rst=0,out=         2
+# clk=1,rst=0,out=         3
+# clk=0,rst=0,out=         3
+# clk=1,rst=0,out=         5
+# clk=0,rst=0,out=         5
+# clk=1,rst=0,out=         8
+# clk=0,rst=0,out=         8
+# clk=1,rst=0,out=        13
+# clk=0,rst=0,out=        13
+# clk=1,rst=0,out=        21
+# clk=0,rst=0,out=        21
+# clk=1,rst=0,out=        34
+# clk=0,rst=0,out=        34
+# clk=1,rst=0,out=        55
+# clk=0,rst=0,out=        55
+# clk=1,rst=0,out=        89
+# clk=0,rst=0,out=        89
+# clk=1,rst=0,out=       144
+# clk=0,rst=0,out=       144
+# clk=1,rst=0,out=       233
+# clk=0,rst=0,out=       233
+# clk=1,rst=0,out=       377
+# clk=0,rst=0,out=       377
+# clk=1,rst=0,out=       610
+# clk=0,rst=0,out=       610
+# clk=1,rst=0,out=       987
+# clk=0,rst=0,out=       987
+# clk=1,rst=0,out=      1597
+# clk=0,rst=0,out=      1597
+# clk=1,rst=0,out=      2584
+# clk=0,rst=0,out=      2584
+# clk=1,rst=0,out=      4181
+# clk=0,rst=0,out=      4181
+# clk=1,rst=0,out=      6765
+# clk=0,rst=0,out=      6765
+# clk=1,rst=0,out=     10946
+# clk=0,rst=0,out=     10946
+# clk=1,rst=0,out=     17711
+# clk=0,rst=0,out=     17711
+# clk=1,rst=0,out=     28657
+# clk=0,rst=0,out=     28657
+# clk=1,rst=0,out=     46368
+# clk=0,rst=0,out=     46368
+# clk=1,rst=0,out=     75025
+# clk=0,rst=0,out=     75025
+# clk=1,rst=0,out=    121393
+# clk=0,rst=0,out=    121393
+# clk=1,rst=0,out=    196418
+# clk=0,rst=0,out=    196418
+# clk=1,rst=0,out=    317811
+# clk=0,rst=0,out=    317811
+# clk=1,rst=0,out=    514229
+# clk=0,rst=0,out=    514229
+# clk=1,rst=0,out=    832040
+# clk=0,rst=0,out=    832040
+# clk=1,rst=0,out=   1346269
+# clk=0,rst=0,out=   1346269
+# clk=1,rst=0,out=   2178309
+# clk=0,rst=0,out=   2178309
+# clk=1,rst=0,out=   3524578
+# clk=0,rst=0,out=   3524578
+# clk=1,rst=0,out=   5702887
+# clk=0,rst=0,out=   5702887
+# clk=1,rst=1,out=   9227465
+# clk=0,rst=1,out=   9227465
+# clk=1,rst=1,out=         0
+# clk=0,rst=1,out=         0
+# clk=1,rst=1,out=         0
+# clk=0,rst=0,out=         0
+# clk=1,rst=0,out=         0
+# clk=0,rst=0,out=         0
+# clk=1,rst=0,out=         1
+# clk=0,rst=0,out=         1
+# clk=1,rst=0,out=         1
+# clk=0,rst=0,out=         1
+# clk=1,rst=0,out=         2
+# clk=0,rst=0,out=         2
+# clk=1,rst=0,out=         3
+# clk=0,rst=0,out=         3
+# clk=1,rst=0,out=         5
+# clk=0,rst=0,out=         5
+# clk=1,rst=0,out=         8
+# clk=0,rst=0,out=         8
+# clk=1,rst=0,out=        13
+# clk=0,rst=0,out=        13
+# clk=1,rst=0,out=        21
+# clk=0,rst=0,out=        21
+# clk=1,rst=0,out=        34
+# clk=0,rst=0,out=        34
+# clk=1,rst=0,out=        55
+# clk=0,rst=0,out=        55
+# clk=1,rst=0,out=        89
+# clk=0,rst=0,out=        89
+# clk=1,rst=0,out=       144
+# clk=0,rst=0,out=       144
+# clk=1,rst=0,out=       233
+# clk=0,rst=0,out=       233
+# clk=1,rst=0,out=       377
+
+  9)
+  design:
+  module circuit(a,b,q);
+  input a,b;
+  output reg q;
+  wire c,d;
+  nor(c,a,b);
+  not(d,b);
+  nand(q,c,d);
+  endmodule
+
+  testbench:
+  module circuit_tb;
+  reg a,b;
+  wire q;
+  circuit dut(a,b,q);
+  initial begin 
+  $monitor("a=%b b=%b output q=%b",a,b,q);
+  a=0;b=0;
+#5 a=0;b=1;
+#5 a=1;b=0;
+#5 a=1;b=1;
+  end
+  endmodule
+
+  output:
+# run -all
+# a=0 b=0 output q=0
+# a=0 b=1 output q=1
+# a=1 b=0 output q=1
+# a=1 b=1 output q=1
+# exit
+
+
+
+
+
+
+
+
+
+
+
+
+

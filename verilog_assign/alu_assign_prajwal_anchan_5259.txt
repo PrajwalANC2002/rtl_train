@@ -1,0 +1,190 @@
+design:
+module alu(opa,opb,cin,clk,rst,ce,mode,cmd,inp_valid,res,oflow,cout,g,l,e,err);
+  parameter size=8;
+  input signed [size-1:0] opa,opb;
+  input cin,clk,rst,ce,mode;
+  input [3:0] cmd;
+  input [1:0] inp_valid;
+  output reg [size:0] res;
+  output reg oflow,cout,g,l,e,err;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst)
+        begin
+          res<=0;
+          oflow<=0;
+          cout<=0;
+          g<=0;
+          l<=0;
+          e<=0;
+        end
+      else if(ce)
+        begin
+          
+          if(mode)
+            begin
+              case(inp_valid)
+                2'b00: ;
+                2'b01:
+                  begin
+                    case(cmd)
+                4'b0100:{cout,res}<=opa+1;
+                4'b0101:{cout,res}<=opa-1;
+                default:{cout,res}<=0;
+              endcase
+                  end
+                2'b10:
+                  begin
+                    case(cmd)
+                4'b0110:{cout,res}<=opb+1;
+                4'b0111:{cout,res}<=opb-1;
+                default:{cout,res}<=0;
+                endcase
+                  end
+                2'b11:
+                  begin
+                    case(cmd)
+                4'b0000:{cout,res}<=opa+opb;
+                4'b0001:{cout,res}<=(opa-opb);
+                4'b0010:{cout,res}<=(opa+opb)+cin;
+                4'b0011:{cout,res}<=(opa-opb)-cin;
+                4'b0100:{cout,res}<=opa+1;
+                4'b0101:{cout,res}<=opa-1;
+                4'b0110:{cout,res}<=opb+1;
+                4'b0111:{cout,res}<=opb-1;
+                4'b1000:
+                  begin
+                  g<=(opa>opb)?1'b1:1'b0;
+                    l<=(opa<opb)?1'b1:1'b0;
+                  e<=(opa==opb)?1'b1:1'b0;
+                  end
+                4'b1001:res<=(opa+1)*(opb+1);
+                4'b1010:res<=((opa<<1)*opb);
+                default:{cout,res}<=0;
+              endcase
+                  end
+                default:{cout,res}<={cout,res};
+              endcase
+              oflow<=cout;
+            end
+          if(!mode)
+            begin
+              case(inp_valid)
+                2'b00:;
+                2'b01:
+                  begin
+                    case(cmd)
+                4'b0110:res<=~opa;
+                4'b1000:res<=opa>>1;
+                4'b1001:res<=opa<<1;
+                default:res<=0;
+              endcase
+                  end
+                  
+                2'b10:
+                  begin
+                    case(cmd)
+                4'b0111:res<=~opb;
+                4'b1010:res<=opb>>1;
+                4'b1011:res<=opb<<1;
+                default:res<=0;
+              endcase
+                  end
+                2'b11:
+                 begin
+                    case(cmd)
+                4'b0000:res<=opa&opb;
+                4'b0001:res<=~(opa&opb);
+                4'b0010:res<=opa|opb;
+                4'b0011:res<=~(opa|opb);
+                4'b0100:res<=opa^opb;
+                4'b0101:res<=~(opa^opb);
+                4'b0110:res<=~opa;
+                4'b0111:res<=~opb;
+                4'b1000:res<=opa>>1;
+                4'b1001:res<=opa<<1;
+                4'b1010:res<=opb>>1;
+                4'b1011:res<=opb<<1;
+                4'b1100:
+                  begin
+                    casex(opb)
+                      8'b0000x000:{res,err}<={opa,1'b0};
+                      8'b0000x001:{res,err}<={{opa[size-2:0],opa[size-1]},1'b0};
+                      8'b0000x010:{res,err}<={{opa[size-3:0],opa[size-1:size-2]},1'b0};
+                      8'b0000x011:{res,err}<={{opa[size-4:0],opa[size-1:size-3]},1'b0};
+                      8'b0000x100:{res,err}<={{opa[size-5:0],opa[size-1:size-4]},1'b0};
+                      8'b0000x101:{res,err}<={{opa[size-6:0],opa[size-1:size-5]},1'b0};
+                      8'b0000x110:{res,err}<={{opa[size-7:0],opa[size-1:size-6]},1'b0};
+                      8'b0000x111:{res,err}<={{opa[0],opa[size-1:size-6]},1'b0};
+                      default:{res,err}<={9'd0,1'b1};
+                    endcase
+                  end
+                4'b1101:
+                    begin
+                  casex(opb)
+                      8'b0000x000:{res,err}<={opa,1'b0};
+                    8'b0000x001:{res,err}<={{opa[0],opa[size-1:size-6]},1'b0};
+                    8'b0000x010:{res,err}<={{opa[size-7:0],opa[size-1:size-6]},1'b0};
+                    8'b0000x011:{res,err}<={{opa[size-6:0],opa[size-1:size-5]},1'b0};
+                      8'b0000x100:{res,err}<={{opa[size-5:0],opa[size-1:size-4]},1'b0};
+                    8'b0000x101:{res,err}<={{opa[size-4:0],opa[size-1:size-3]},1'b0};
+                    8'b0000x110:{res,err}<={{opa[size-3:0],opa[size-1:size-2]},1'b0};
+                    8'b0000x111:{res,err}<={{opa[size-2:0],opa[size-1]},1'b0};
+                    default:{res,err}<={9'd0,1'b1};
+                  endcase
+                    end
+                      
+                default:res<=0;
+              endcase
+                  end
+                default:res<=res;
+              endcase
+            end
+        end
+      else res<=res;
+    end
+endmodule
+
+testbench:
+module alu_tb;
+  parameter size=8;
+  reg signed [size-1:0]opa,opb;
+  reg cin,clk,rst,ce,mode;
+  reg [3:0] cmd;
+  reg [1:0] inp_valid;
+  wire [size:0] res;
+  wire oflow,cout,g,l,e,err;
+  alu dut(opa,opb,cin,clk,rst,ce,mode,cmd,inp_valid,res,oflow,cout,g,l,e,err);
+  always #1 clk=~clk;
+  initial
+    begin
+      rst=1'b1;clk=1'b0;
+      #2 rst=1'b0;
+      #3 ce=1'b1;
+      #6 opa=10;opb=12;cin=1;
+      #2   mode=1;
+      for(integer j=0;j<=3;j=j+1)
+        begin
+          #2 inp_valid=j;
+          for(integer i=0;i<=11;i=i+1)
+        begin
+          #2 cmd=i;
+        end
+        end
+      #2 mode=0;
+      for(integer j=0;j<=3;j=j+1)
+        begin
+          #2 inp_valid=j;
+          for(integer i=0;i<=14;i=i+1)
+        begin
+          #2 cmd=i;
+        end
+        end
+      #100 $finish;
+    end
+      initial 
+        begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+        end
+endmodule

@@ -1,0 +1,42 @@
+monday 
+morning session:
+- STA using primetime
+-what is STA and primetime overview
+-primetime STA flow,setupdesign,timing constraint,path delay calculation,operating condition,timing exceptions
+-how to generate reports steps to start prime time
+-primetime lab using a example design and the structure of the tcl file to run synthesis on primetime
+
+tuesday
+morning session
+-ASIC synthesis using design compiler(dc)
+-introduction,design compiler flow,different stages in synthesis
+-different design compiler families
+-different components required to run the design compiler
+
+afternoon session
+-structure of .synopsys_dc.setup,ways to start design compiler in batch or gui mode
+-specifying technology libraries in .synopsy_dc.setup file
+-commands to invoke dc and read verilog rtl,unmapped rtl,saving gate level netlist
+
+wednesday
+morning session
+-labs on design compiler using different mux design code
+
+afternoon session
+-continued labs 
+-session on constraint formats,constraint types,different design objects
+-commands to set operating conditions,design rule and environmental constraints
+
+thursday
+morning session:
+-different optimization levels performed by design compiler
+-defining wire load models and hierarchical wire load models
+-modelling the system interface(defining drive characyeristics for input port,loads on input and output port
+defining fanout loads on output port)
+-ports vs pins
+-commands to create clock and set different clocking constraints
+
+afternoon session:
+-labs using hierarchical design ripplecarry adder using full adder,fifo
+-different ways to read hierarchical design using dc
+-various tips to write rtl code

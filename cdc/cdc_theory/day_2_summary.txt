@@ -1,0 +1,6 @@
+mornig session
+-pulse to pulse synchronizer(fast to slow clock domain and viceversa)
+-convergence ,divergence and reconvergence issues
+afternoon session
+-different reconvergence issues and how to fix it
+-introduction to synopsys cdc methodology flow 

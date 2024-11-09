@@ -1,0 +1,1320 @@
+Draw a state diagram and write a verilog code for
+a. 11011 Overlapping(Mealy) Sequence Detector.
+design:
+module mealy_11011_overlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter idle=3'b000,one=3'b001,oneone=3'b010,oneonezero=3'b011,oneonezeroone=3'b100;
+  reg [2:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=one;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        one:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=oneone;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        oneone:
+          begin
+            if(seq_in==0)
+              begin
+                next_state=oneonezero;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=oneone;
+                detect_out=1'b0;
+              end
+          end
+        oneonezero:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=oneonezeroone;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        oneonezeroone:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=oneone;
+                detect_out=1'b1;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        default:
+          begin
+            next_state = idle;
+            detect_out = 1'b0;
+          end
+      endcase
+    end
+endmodule
+
+testbench:
+module mealy_11011_overlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  mealy_11011_overlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+
+output:
+
+# run 100ns
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=1,detect_out=1
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+b. 11011 Non Overlapping(Mealy) Sequence Detector
+design:
+module mealy_11011_nonoverlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter idle=3'b000,one=3'b001,oneone=3'b010,oneonezero=3'b011,oneonezeroone=3'b100;
+  reg [2:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=one;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        one:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=oneone;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        oneone:
+          begin
+            if(seq_in==0)
+              begin
+                next_state=oneonezero;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=oneone;
+                detect_out=1'b0;
+              end
+          end
+        oneonezero:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=oneonezeroone;
+                detect_out=1'b0;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        oneonezeroone:
+          begin
+            if(seq_in==1)
+              begin
+                next_state=idle;
+                detect_out=1'b1;
+              end
+            else
+              begin
+                next_state=idle;
+                detect_out=1'b0;
+              end
+          end
+        default:
+          begin
+            next_state = idle;
+            detect_out = 1'b0;
+          end
+      endcase
+    end
+endmodule
+
+testbench:
+module mealy_11011_nonoverlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  mealy_11011_nonoverlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+
+output:
+# run -all
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=1,detect_out=1
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+c.11011 Overlapping(Moore) Sequence Detector
+
+design:
+module moore_11011_overlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter idle=3'b000,one=3'b001,oneone=3'b010,oneonezero=3'b011,oneonezeroone=3'b100,oneonezerooneone=3'b101;
+  reg [2:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+                next_state=one;
+            else
+                next_state=idle;
+          end
+        one:
+          begin
+            if(seq_in==1)
+                next_state=oneone;
+            else
+              next_state=idle;
+          end
+        oneone:
+          begin
+            if(seq_in==0)
+              next_state=oneonezero;
+            else
+              next_state=oneone;
+          end
+        oneonezero:
+          begin
+            if(seq_in==1)
+              next_state=oneonezeroone;
+            else
+              next_state=idle;
+          end
+        oneonezeroone:
+          begin
+            if(seq_in==1)
+              next_state=oneonezerooneone;
+            else
+              next_state=idle;
+          end
+        oneonezerooneone:
+          begin
+            if(seq_in==1)
+              next_state=oneone;
+            else
+              next_state=oneonezero;
+          end
+        default:
+          next_state = idle;
+      endcase
+    end
+  always @(current_state)
+    begin 
+      case(current_state) 
+        idle:detect_out = 0;
+        one:detect_out = 0;
+        oneone:detect_out = 0;
+        oneonezero:detect_out = 0;
+        oneonezeroone:detect_out = 0;
+        oneonezerooneone:detect_out=1;
+        default:detect_out = 0;
+      endcase
+    end 
+endmodule
+
+testbench:
+module moore_11011_overlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  moore_11011_overlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+
+output:
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=0,detect_out=1
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+
+d. 11011 Non Overlapping(Moore) Sequence Detector
+design:
+module moore_11011_nonoverlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter
+idle=3'b000,one=3'b001,oneone=3'b010,oneonezero=3'b011,oneonezeroone=3'b100,oneonezerooneone=3'b101;
+  reg [2:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+                next_state=one;
+            else
+                next_state=idle;
+          end
+        one:
+          begin
+            if(seq_in==1)
+                next_state=oneone;
+            else
+              next_state=idle;
+          end
+        oneone:
+          begin
+            if(seq_in==0)
+              next_state=oneonezero;
+            else
+              next_state=oneone;
+          end
+        oneonezero:
+          begin
+            if(seq_in==1)
+              next_state=oneonezeroone;
+            else
+              next_state=idle;
+          end
+        oneonezeroone:
+          begin
+            if(seq_in==1)
+              next_state=oneonezerooneone;
+            else
+              next_state=idle;
+          end
+        oneonezerooneone:
+          begin
+            if(seq_in==1)
+              next_state=one;
+            else
+              next_state=idle;
+          end
+        default:
+          next_state = idle;
+      endcase
+    end
+  always @(current_state)
+    begin 
+      case(current_state) 
+        idle:detect_out = 0;
+        one:detect_out = 0;
+        oneone:detect_out = 0;
+        oneonezero:detect_out = 0;
+        oneonezeroone:detect_out = 0;
+        oneonezerooneone:detect_out=1;
+        default:detect_out = 0;
+      endcase
+    end 
+endmodule
+
+testbench:
+module moore_11011_nonoverlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  moore_11011_nonoverlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+
+output:
+# run 100ns
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=0,detect_out=1
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+2). Draw a state diagram and write a verilog code for 1011 Overlapping(Moore)
+Sequence Detector using
+a.Binary encoding
+design:
+module moore_1011_overlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter idle=3'b000,one=3'b001,onezero=3'b010,onezeroone=3'b011,onezerooneone=3'b100;//binary encoding
+  reg [2:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+                next_state=one;
+            else
+                next_state=idle;
+          end
+        one:
+          begin
+            if(seq_in==0)
+                next_state=onezero;
+            else
+              next_state=one;
+          end
+        onezero:
+          begin
+            if(seq_in==1)
+              next_state=onezeroone;
+            else
+              next_state=idle;
+          end
+        onezeroone:
+          begin
+            if(seq_in==1)
+              next_state=onezerooneone;
+            else
+              next_state=onezero;
+          end
+        onezerooneone:
+          begin
+            if(seq_in==1)
+              next_state=one;
+            else
+              next_state=onezero;
+          end
+        default:
+          next_state = idle;
+      endcase
+    end
+  always @(current_state)
+    begin 
+      case(current_state) 
+        idle:detect_out = 0;
+        one:detect_out = 0;
+        onezero:detect_out = 0;
+        onezeroone:detect_out = 0;
+        onezerooneone:detect_out = 1;
+        default:detect_out = 0;
+      endcase
+    end 
+endmodule
+
+testbench:
+module moore_1011_overlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  moore_1011_overlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+$monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+
+output:
+# run -all
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=0,detect_out=1
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+
+
+
+b. One hot encoding
+design:
+module moore_1011_overlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter idle=5'b00001,one=5'b00010,onezero=5'b00100,onezeroone=5'b01000,onezerooneone=5'b10000;//one hot encoding
+  reg [4:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+                next_state=one;
+            else
+                next_state=idle;
+          end
+        one:
+          begin
+            if(seq_in==0)
+                next_state=onezero;
+            else
+              next_state=one;
+          end
+        onezero:
+          begin
+            if(seq_in==1)
+              next_state=onezeroone;
+            else
+              next_state=idle;
+          end
+        onezeroone:
+          begin
+            if(seq_in==1)
+              next_state=onezerooneone;
+            else
+              next_state=onezero;
+          end
+        onezerooneone:
+          begin
+            if(seq_in==1)
+              next_state=one;
+            else
+              next_state=onezero;
+          end
+        default:
+          next_state = idle;
+      endcase
+    end
+  always @(current_state)
+    begin 
+      case(current_state) 
+        idle:detect_out = 0;
+        one:detect_out = 0;
+        onezero:detect_out = 0;
+        onezeroone:detect_out = 0;
+        onezerooneone:detect_out = 1;
+        default:detect_out = 0;
+      endcase
+    end 
+endmodule
+
+testbench:
+module moore_1011_overlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  moore_1011_overlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+
+output:
+# run -all
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=0,detect_out=1
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+c. Gray code encoding
+design:
+module moore_1011_overlap(clk,rst,seq_in,detect_out);
+  input clk,rst,seq_in;
+  output reg detect_out;
+  parameter idle=3'b000,one=3'b001,onezero=3'b011,onezeroone=3'b010,onezerooneone=3'b110;//gray encoding
+  reg [2:0] current_state,next_state;
+  always@(posedge clk or posedge rst)
+    begin
+      if(rst==1)
+        current_state<=idle;
+      else
+        current_state<=next_state;
+    end
+  always@(current_state or seq_in)
+    begin
+      case(current_state)
+        idle:
+          begin
+            if(seq_in==1)
+                next_state=one;
+            else
+                next_state=idle;
+          end
+        one:
+          begin
+            if(seq_in==0)
+                next_state=onezero;
+            else
+              next_state=one;
+          end
+        onezero:
+          begin
+            if(seq_in==1)
+              next_state=onezeroone;
+            else
+              next_state=idle;
+          end
+        onezeroone:
+          begin
+            if(seq_in==1)
+              next_state=onezerooneone;
+            else
+              next_state=onezero;
+          end
+        onezerooneone:
+          begin
+            if(seq_in==1)
+              next_state=one;
+            else
+              next_state=onezero;
+          end
+        default:
+          next_state = idle;
+      endcase
+    end
+  always @(current_state)
+    begin 
+      case(current_state) 
+        idle:detect_out = 0;
+        one:detect_out = 0;
+        onezero:detect_out = 0;
+        onezeroone:detect_out = 0;
+        onezerooneone:detect_out = 1;
+        default:detect_out = 0;
+      endcase
+    end 
+endmodule
+
+testbench:
+module moore_1011_overlap_tb;
+  reg clk=0,rst,seq_in;
+  wire detect_out;
+  moore_1011_overlap dut(clk,rst,seq_in,detect_out);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b,rst=%b,seq_in=%b,detect_out=%b",clk,rst,seq_in,detect_out);
+    rst=1'b1; 
+    #2 rst=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b1;
+    #2 seq_in=1'b0;
+    #2 $finish;
+  end
+  initial begin 
+$dumpfile("dump.vcd"); 
+$dumpvars(); 
+  end
+
+endmodule
+    
+output:
+# run -all
+# clk=0,rst=1,seq_in=x,detect_out=0
+# clk=1,rst=1,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=x,detect_out=0
+# clk=1,rst=0,seq_in=x,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=0,detect_out=0
+# clk=1,rst=0,seq_in=0,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=0
+# clk=0,rst=0,seq_in=1,detect_out=0
+# clk=1,rst=0,seq_in=1,detect_out=1
+# clk=0,rst=0,seq_in=0,detect_out=1
+# clk=1,rst=0,seq_in=0,detect_out=0
+
+
+
+
+
+3)Write a verilog code for Mod 4 Ring counter. During the preset condition the
+state must be set to 1000
+
+design:
+module mod_4_ring_counter(clk,rst_n,count,preset);
+  input preset,rst_n,clk;
+  output [3:0] count;
+  reg [3:0] count_temp;
+  always@(posedge clk or negedge rst_n)
+    begin
+    if(!rst_n)count_temp<=4'b0001;
+  else if(preset) count_temp<=4'b1000;
+  else count_temp<={count_temp[2:0],count_temp[3]};
+    end
+  assign count=count_temp;
+endmodule
+
+testbench:
+module mod_4_ringcounter_tb;
+  wire [3:0]count;
+  reg clk,rst_n,preset;
+  mod_4_ring_counter dut(clk,rst_n,count,preset);
+  always #2 clk=~clk;
+  initial begin
+    $monitor("clk=%b ,rst_n=%b ,preset=%b,count=%b",clk,rst_n,preset,count);
+  clk=0;rst_n=0;preset=0;
+    #5 rst_n=1;
+    #20 preset=1;
+    #10 preset=0;
+    #15 $finish;
+  end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+
+output:
+# run 100ns
+# clk=0 ,rst_n=0 ,preset=0,count=0001
+# clk=1 ,rst_n=0 ,preset=0,count=0001
+# clk=0 ,rst_n=0 ,preset=0,count=0001
+# clk=0 ,rst_n=1 ,preset=0,count=0001
+# clk=1 ,rst_n=1 ,preset=0,count=0010
+# clk=0 ,rst_n=1 ,preset=0,count=0010
+# clk=1 ,rst_n=1 ,preset=0,count=0100
+# clk=0 ,rst_n=1 ,preset=0,count=0100
+# clk=1 ,rst_n=1 ,preset=0,count=1000
+# clk=0 ,rst_n=1 ,preset=0,count=1000
+# clk=1 ,rst_n=1 ,preset=0,count=0001
+# clk=0 ,rst_n=1 ,preset=0,count=0001
+# clk=1 ,rst_n=1 ,preset=0,count=0010
+# clk=0 ,rst_n=1 ,preset=0,count=0010
+# clk=0 ,rst_n=1 ,preset=1,count=0010
+# clk=1 ,rst_n=1 ,preset=1,count=1000
+# clk=0 ,rst_n=1 ,preset=1,count=1000
+# clk=1 ,rst_n=1 ,preset=1,count=1000
+# clk=0 ,rst_n=1 ,preset=1,count=1000
+# clk=1 ,rst_n=1 ,preset=1,count=1000
+# clk=1 ,rst_n=1 ,preset=0,count=1000
+# clk=0 ,rst_n=1 ,preset=0,count=1000
+# clk=1 ,rst_n=1 ,preset=0,count=0001
+# clk=0 ,rst_n=1 ,preset=0,count=0001
+# clk=1 ,rst_n=1 ,preset=0,count=0010
+# clk=0 ,rst_n=1 ,preset=0,count=0010
+# clk=1 ,rst_n=1 ,preset=0,count=0100
+# clk=0 ,rst_n=1 ,preset=0,count=0100
+
+3)Write a verilog code Mod 8 Johnson counter.
+design:
+module mod_8_johnson_counter(clk,rst_n,count);
+  input rst_n,clk;
+  output [3:0] count;
+  reg [3:0] count_temp;
+  always@(posedge clk or negedge rst_n)
+    begin
+      if(!rst_n)count_temp<=4'b0000;
+      else count_temp<={count_temp[2:0],~count_temp[3]};
+    end
+  assign count=count_temp;
+endmodule
+
+testbench:
+module mod_8_johnson_counter_tb;
+  wire [3:0]count;
+  reg clk,rst_n;
+  mod_8_johnson_counter dut(clk,rst_n,count);
+  always #2 clk=~clk;
+  initial begin
+    $monitor("clk=%b ,rst_n=%b ,count=%b",clk,rst_n,count);
+  clk=0;rst_n=0;
+    #5 rst_n=1;
+    #50 $finish;
+  end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+output:
+# run 100ns
+# clk=0 ,rst_n=0 ,count=0000
+# clk=1 ,rst_n=0 ,count=0000
+# clk=0 ,rst_n=0 ,count=0000
+# clk=0 ,rst_n=1 ,count=0000
+# clk=1 ,rst_n=1 ,count=0001
+# clk=0 ,rst_n=1 ,count=0001
+# clk=1 ,rst_n=1 ,count=0011
+# clk=0 ,rst_n=1 ,count=0011
+# clk=1 ,rst_n=1 ,count=0111
+# clk=0 ,rst_n=1 ,count=0111
+# clk=1 ,rst_n=1 ,count=1111
+# clk=0 ,rst_n=1 ,count=1111
+# clk=1 ,rst_n=1 ,count=1110
+# clk=0 ,rst_n=1 ,count=1110
+# clk=1 ,rst_n=1 ,count=1100
+# clk=0 ,rst_n=1 ,count=1100
+# clk=1 ,rst_n=1 ,count=1000
+# clk=0 ,rst_n=1 ,count=1000
+# clk=1 ,rst_n=1 ,count=0000
+# clk=0 ,rst_n=1 ,count=0000
+# clk=1 ,rst_n=1 ,count=0001
+# clk=0 ,rst_n=1 ,count=0001
+# clk=1 ,rst_n=1 ,count=0011
+# clk=0 ,rst_n=1 ,count=0011
+# clk=1 ,rst_n=1 ,count=0111
+# clk=0 ,rst_n=1 ,count=0111
+# clk=1 ,rst_n=1 ,count=1111
+# clk=0 ,rst_n=1 ,count=1111
+# clk=1 ,rst_n=1 ,count=1110
+
+Write a verilog code for
+a. clk/4 with 50% duty cycle
+design:
+module clk_divide_by_4(clk,rst_n,clk_out);
+  input clk,rst_n;
+  output reg clk_out;
+  reg [1:0] count;
+  always@(posedge clk)
+    begin
+    if(!rst_n)
+      begin
+        count<=2'b00;
+        clk_out<=0;
+      end
+else if(count==2'b11)
+    begin
+      count<=2'b00;
+      clk_out=~clk_out;
+    end
+ else
+    begin
+      count=count+1;
+    end
+  end
+endmodule
+
+testbench:
+module clk_by_4_tb;
+  wire clk_out;
+  reg clk,rst_n;
+  clk_divide_by_4 dut(clk,rst_n,clk_out);
+  always #2 clk=~clk;
+  initial begin
+    clk=0;rst_n=0;
+    #5 rst_n=1;
+    #40 $finish;
+  end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+
+output:
+# run 100ns
+# clk=0,rst_n=0,clk_out=x
+# clk=1,rst_n=0,clk_out=0
+# clk=0,rst_n=0,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+
+b. clk/3 with 50% duty cycle
+
+design:
+module clk_divide_by_3(clk,rst_n,clk_out);
+  input clk,rst_n;
+  output reg clk_out;
+  reg [1:0] count;
+  always@(posedge clk)
+    begin
+    if(!rst_n)
+      begin
+        count<=2'b00;
+        clk_out<=0;
+      end
+else if(count==2'b10)
+    begin
+      count<=2'b00;
+      clk_out=~clk_out;
+    end
+   else
+    begin
+      count=count+1;
+    end
+  end
+endmodule
+
+testbench:
+module clk_by_3_tb;
+  wire clk_out;
+  reg clk,rst_n;
+  clk_divide_by_3 dut(clk,rst_n,clk_out);
+  always #2 clk=~clk;
+  initial begin
+    clk=0;rst_n=0;
+    #5 rst_n=1;
+    #40 $finish;
+  end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+output:
+# run 100ns
+# clk=0,rst_n=0,clk_out=x
+# clk=1,rst_n=0,clk_out=0
+# clk=0,rst_n=0,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=0
+# clk=0,rst_n=1,clk_out=0
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+# clk=1,rst_n=1,clk_out=1
+# clk=0,rst_n=1,clk_out=1
+
+Write a Verilog code for a BCD adder. Consider the inputs a and b as 3 bit vectors
+design:
+module bcd_adder(a,b,carry_in,sum,carry);
+
+    input [3:0] a,b;
+    input carry_in;
+  output  [4:0] sum;
+    output reg carry;
+    reg [4:0] sum_temp;
+    always @(a,b,carry_in)
+    begin
+        sum_temp = a+b+carry_in;
+        if(sum_temp > 9)    
+          begin
+            sum_temp = sum_temp+6; 
+            carry = 1;    
+          end
+        else   
+          begin
+            carry = 0;
+          end
+    end 
+  assign sum = sum_temp[3:0];
+endmodule
+
+testbench:
+
+module tb_bcdadder;
+    reg [3:0] a;
+    reg [3:0] b;
+    reg carry_in;
+    wire [3:0] sum;
+    wire carry;
+  bcd_adder dut(a,b,carry_in,sum,carry);
+
+      initial begin
+        $monitor("a=%b,b=%b,sum=%b,carry=%b",a,b,sum,carry);
+        a = 0;  b = 0;  carry_in = 0;  
+        #100;
+        a = 6;  b = 9;  carry_in = 0;   
+        #100;
+        a = 3;  b = 3;  carry_in = 1; 
+        #100;
+        a = 4;  b = 5;  carry_in = 0; 
+        #100;
+        a = 8;  b = 2;  carry_in = 0; 
+        #100;
+        a = 9;  b = 9;  carry_in = 0; 
+        #100;
+    end
+      
+endmodule
+
+output:
+# run -all
+# a=0000,b=0000,sum=0000,carry=0
+# a=0110,b=1001,sum=0101,carry=1
+# a=0011,b=0011,sum=0111,carry=0
+# a=0100,b=0101,sum=1001,carry=0
+# a=1000,b=0010,sum=0000,carry=1
+# a=1001,b=1001,sum=1000,carry=1
+# exit
+
+
+//////////////////////////////////////////////////////////
+module freq_div(clk,clk_div);
+  input clk;
+  output reg clk_div;
+  parameter temp=3;
+  reg [31:0]count;
+  initial begin
+    count=0;clk_div=0;
+  end
+  always@(clk)
+    begin
+    count=count+1;
+      clk_div=(count==temp)?~clk_div:clk_div;
+      count=(count==temp)?0:count;
+    end
+endmodule
+

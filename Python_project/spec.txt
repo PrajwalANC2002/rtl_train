@@ -1,0 +1,8 @@
+Python project
+-run all tests
+-generate a report
+   from the report 
+   find the total number of tests that have been run
+   print the test failed
+   print the test name
+    -print the lines that have been failed

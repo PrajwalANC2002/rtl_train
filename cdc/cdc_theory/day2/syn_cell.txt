@@ -1,0 +1,17 @@
+module d_ff(clk, rst, d, q);
+	input clk, rst, d;
+	output reg q;
+	
+	always@(posedge clk) begin
+		if(!reset)
+			q <= 1'b0;
+		else
+			q <= d;
+	end 
+endmodule
+
+module synchronizer(input clk,rst,in,output q);
+	wire dout;
+ 	d_ff d1(.clk(clk), .rst(rst), .d(in), .q(dout));
+	d_ff d2(.clk(clk), .rst(rst), .d(dout), .q(q));
+endmodule

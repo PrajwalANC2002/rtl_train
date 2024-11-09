@@ -1,0 +1,461 @@
+1)
+module arithmetic(operand1, operand2, add_out, sub_out,mult_out,div_out,mod_out);
+  input [7:0] operand1,operand2;
+  output reg [7:0] add_out, sub_out,mult_out,div_out,mod_out;
+assign add_out = operand1 + operand2;
+assign sub_out = operand1 - operand2;
+assign mult_out=operand1 * operand2;
+assign div_out=operand1 / operand2;
+assign mod_out=operand1 % operand2; 
+endmodule: arithmetic
+
+testbench:
+`timescale 1ns/1ns
+module arithmetic_tb;
+reg [7:0] operand1, operand2;
+wire [7:0] add_out, sub_out,mult_out,div_out,mod_out;
+arithmetic dut(operand1, operand2,add_out,sub_out,mult_out,div_out,mod_out);
+initial begin
+  $monitor("Sum = %0b\nDifference = %0b\nMultiplication = %0b\nDivision = %0b\nModulus = %0b", add_out, sub_out, mult_out,div_out,mod_out);
+operand1 = 8'b00000100;
+operand2 = 8'b00000011;
+#1;
+operand1 = 8'b00000101;
+operand2 = 8'b00000001;
+end
+endmodule
+
+output:
+# Sum = 111
+# Difference = 1
+# Multiplication = 1100
+# Division = 1
+# Modulus = 1
+# Sum = 110
+# Difference = 100
+# Multiplication = 101
+# Division = 101
+# Modulus = 0
+# exit
+
+2)
+module greater(operand1,operand2,result);
+  input [14:0] operand1,operand2; 
+  output reg result;
+  always@(*)
+    begin
+      if(operand1>=operand2)
+        result=1;
+      else
+        result=0;
+    end
+endmodule:greater
+
+testbench:
+`timescale 1ns/1ns
+module greater_tb;
+  reg [14:0] operand1, operand2;
+  wire result;
+  greater dut(operand1, operand2, result);
+initial begin
+  $monitor("Output is %b", result);
+  operand1 = 15'b101;
+  operand2 = 15'b001;
+#1;
+operand2 = 15'b1001;
+#1;
+operand1 = 15'b0001;
+end
+always@(result)
+  if(result)
+$display("greatest operand is %b:",operand1);
+  else
+    $display("greatest operand is %b:",operand2);
+endmodule
+
+output:
+# run -all
+# greatest operand is 000000000000101:
+# Output is 1
+# greatest operand is 000000000001001:
+# Output is 0
+
+3)
+
+module greater(operand1,operand2,result);
+  input [7:0] operand1,operand2; 
+  output reg result;
+  always@(*)
+    begin
+      if(operand1==operand2)
+        result=1;
+      else
+        result=0;
+    end
+endmodule:greater
+
+testbench:
+`timescale 1ns/1ns
+module greater_tb;
+  reg [7:0] operand1, operand2;
+  wire result;
+  greater dut(operand1, operand2, result);
+initial begin
+  $monitor("Output is %b", result);
+  operand1 = 8'b101;
+  operand2 = 8'b101;
+#1;
+operand2 = 8'b1001;
+#1;
+operand1 = 8'b0001;
+end
+always@(result)
+  if(result)
+    $display("the operands %b and %b are equal:",operand1,operand2);
+  else
+    $display("the operands %b and %b are not equal",operand1,operand2);  
+endmodule
+
+output:
+# run -all
+# the operands 00000101 and 00000101 are equal:
+# Output is 1
+# the operands 00000101 and 00001001 are not equal
+# Output is 0
+
+4)
+
+module bitwise_operator(in1, in2, out);
+input [7:0] in1,in2;
+output reg [7:0]out[4:0];
+
+always @(*) begin
+  out[0] = ~ in1;
+  out[1] = ~ in2;
+  out[2] = (in1 | in2);
+  out[3] = (in1 ^ in2);
+  out[4] = (in1 ~^ in2);
+end
+endmodule:bitwise_operator
+
+Testbench:-
+
+module bitwise_operator_tb;
+reg [7:0] in1,in2;
+wire [7:0]out[4:0];
+  
+bitwise_operator dut(in1, in2, out);
+
+initial begin
+  $monitor("~ %b = %b\n~ %b = %b\n%b | %b = %b\n%b ^ %b = %b\n%b ~^ %b = %b\n", in1, out[0],in2, out[1],in1, in2, out[2], in1, in2, out[3], in1, in2, out[4]);
+  in1 = 8'b101x1z0z;
+  in2 = 8'b11x0z11x;
+  #1
+  in1 = 8'b11111111;
+  in2 = 8'b11111111;
+end
+endmodule
+
+Output:-
+~ 101x1z0z = 010x0x1x
+~ 11x0z11x = 00x1x00x
+101x1z0z | 11x0z11x = 111x111x
+101x1z0z ^ 11x0z11x = 01xxxx1x
+101x1z0z ~^ 11x0z11x = 10xxxx0x
+
+~ 11111111 = 00000000
+~ 11111111 = 00000000
+11111111 | 11111111 = 11111111
+11111111 ^ 11111111 = 00000000
+11111111 ~^ 11111111 = 11111111
+
+5. 
+
+module logical_operator(in1, in2, out);
+input [7:0] in1,in2;
+output reg [1:0]out;
+
+always @(*) begin
+  out[0] = in1 || in2;
+  out[1] = in1 && in2;
+end
+endmodule:logical_operator
+
+Testbench:-
+
+module logical_operator_tb;
+reg [7:0] in1,in2;
+wire [1:0] out;
+  
+logical_operator dut(in1, in2, out);
+
+initial begin
+  $monitor("%b || %b = %b\n%b && %b = %b\n", in1, in2, out[0], in1, in2, out[1]);
+  in1 = 8'b101x1z0z;
+  in2 = 8'b00x0z00x;
+  #1
+  in1 = 8'b11110000;
+  in2 = 8'b00001111;
+  #1
+  in1 = 8'bzxzx1010;
+  in2 = 8'bxzxz0101;
+end
+endmodule
+
+Output:-
+101x1z0z || 00x0z00x = 1
+101x1z0z && 00x0z00x = x
+
+11110000 || 00001111 = 1
+11110000 && 00001111 = 1
+
+zxzx1010 || xzxz0101 = 1
+zxzx1010 && xzxz0101 = 1
+
+
+6. 
+
+module reduction_operator(in, out);
+input [3:0] in;
+output reg [4:0]out;
+
+always @(*) begin
+  out[0] = &in;
+  out[1] = ~|in;
+  out[2] = ~&in;
+  out[3] = ^in;
+  out[4] = ~^in;
+end
+endmodule:reduction_operator
+
+Testbench:-
+
+module reduction_operator_tb;
+reg [3:0] in;
+wire [4:0] out;
+  
+reduction_operator dut(in, out);
+
+initial begin
+  $monitor("&%b = %b\n~|%b = %b\n~&%b = %b\n^%b = %b\n~^%b = %b\n", in, out[0], in, out[1], in, out[2], in, out[3], in, out[4],);
+  in = 4'b1111;
+  #1
+  in = 4'b0000;
+  #1
+  in = 4'b1010;
+  #1
+  in = 4'b0011;
+end
+endmodule
+
+Output:-
+&1111 = 1
+~|1111 = 0
+~&1111 = 0
+^1111 = 0
+~^1111 = 1
+ 
+&0000 = 0
+~|0000 = 1
+~&0000 = 1
+^0000 = 0
+~^0000 = 1
+ 
+&1010 = 0
+~|1010 = 0
+~&1010 = 1
+^1010 = 0
+~^1010 = 1
+ 
+&0011 = 0
+~|0011 = 0
+~&0011 = 1
+^0011 = 0
+~^0011 = 1
+ 
+
+7. 
+
+module concat(in1, in2, out);
+input [3:0] in1,in2;
+output reg [7:0]out;
+
+always @(*) begin
+  out = {in1,in2};
+end
+endmodule:concat
+
+Testbench:-
+
+module concat_tb;
+reg [3:0] in1,in2;
+wire [7:0] out;
+  
+concat dut(in1, in2, out);
+
+initial begin
+  $monitor("concatination of %b and %b = %b\n", in1, in2, out);
+  in1 = 4'b1111;
+  in2 = 4'b0000;
+  #1
+  in1 = 4'bx1x1;
+  in2 = 4'bz0z1;
+  #1
+  in1 = 4'bzxzx;
+  in2 = 4'b0000;
+end
+endmodule
+
+Output:-
+concatination of 1111 and 0000 = 11110000
+
+concatination of x1x1 and z0z1 = x1x1z0z1
+
+concatination of zxzx and 0000 = zxzx0000
+
+
+8.
+
+module replication(in, out);
+input [3:0] in;
+output reg [7:0]out;
+
+always @(*) begin
+  out = {2{in}};
+end
+endmodule:replication
+
+Testbench:-
+
+module replication_tb;
+reg [3:0] in;
+wire [7:0] out;
+  
+replication dut(in, out);
+
+initial begin
+  $monitor("replication of %b is : %b\n", in, out);
+  in = 4'b1111;
+  #1
+  in = 4'b0000;
+  #1
+  in = 4'b1010;
+end
+endmodule
+
+Output:-
+replication of 1111 is : 11111111
+
+replication of 0000 is : 00000000
+
+replication of 1010 is : 10101010
+
+
+9. 
+
+module conditional_operator(in1, in2, out);
+input [3:0] in1,in2;
+output reg [3:0]out;
+
+always @(*) begin
+  out = in1 > in2? in1:in2;
+end
+endmodule:conditional_operator
+
+Testbench:-
+
+module conditional_operator_tb;
+reg [3:0] in1,in2;
+wire [3:0] out;
+  
+conditional_operator dut(in1, in2, out);
+
+initial begin
+  $monitor("greater number among %d and %d : %d\n", in1, in2, out);
+  in1 = 4'd1;
+  in2 = 4'd2;
+  #1
+  in1 = 4'd7;
+  in2 = 4'd8;
+  #1
+  in1 = 4'd9;
+  in2 = 4'd11;
+end
+endmodule
+
+Output:-
+greater number among  1 and  2 :  2
+
+greater number among  7 and  8 :  8
+
+greater number among  9 and 11 : 11
+
+10) shift operator manual
+module shift_operation;
+  reg [3:0] a, b;
+  reg [7:0] a_bitwise, b_bitwise;
+
+  // Perform arithmetic operation
+  initial begin
+    a = 4;
+    b = 3;
+    $display("Arithmetic Operation: a + b = %0d", a + b);
+
+    // Perform shift operation
+    a = 4'b1100;
+    b = 2; 
+    $display("LEFT Shift Operation: a << b = %b", a << b);
+    $display("RIGHT Shift Operation: a >> b = %b", a >> b);
+
+    // Perform relational operation
+    a = 4'b1100;
+    b = 4'b101x;
+    $display("Relational Operation: a > b is %b", (a > b));
+    $display("Relational Operation: a < b is %b", (a < b));
+    $display("Relational Operation: a != b is %b", (a != b));
+    $display("Relational Operation: a == b is %b", (a == b));
+
+
+    // Perform logical operation
+    a = 4'b1100;
+    b = 4'b0000;
+    $display("Logical Operation: a AND b = %b", a && b);
+    $display("Logical Operation: a OR b = %b", a || b);
+    $display("Logical Operation: NOT of a = %b", ~a);
+    $display("Logical Operation: NOT of b = %b", ~b);
+
+
+
+    // Perform bitwise operation
+    a_bitwise = 8'b1010xzxz;
+    b_bitwise = 8'b10010011;
+    $display("Bitwise Operation: a AND b = %b", a_bitwise & b_bitwise);
+    $display("Bitwise Operation: a OR b = %b", a_bitwise| b_bitwise);
+    $display("Bitwise Operation: a XOR b = %b", a_bitwise ^ b_bitwise);
+  end
+endmodule
+
+
+
+OUTPUT:
+# Arithmetic Operation: a + b = 7
+# LEFT Shift Operation: a << b = 0000
+# RIGHT Shift Operation: a >> b = 0011
+# Relational Operation: a > b is x
+# Relational Operation: a < b is x
+# Relational Operation: a != b is 1
+# Relational Operation: a == b is 0
+# Logical Operation: a AND b = 0
+# Logical Operation: a OR b = 1
+# Logical Operation: NOT of a = 0011
+# Logical Operation: NOT of b = 1111
+# Bitwise Operation: a AND b = 100000xx
+# Bitwise Operation: a OR b = 1011xx11
+# Bitwise Operation: a XOR b = 0011xxxx
+
+
+
+
+
+
+

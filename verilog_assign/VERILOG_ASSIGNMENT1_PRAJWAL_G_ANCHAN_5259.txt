@@ -1,0 +1,323 @@
+
+exercise1)
+module displaying_numbers;
+reg [8:0] a = 20 ;
+reg [7:0] b = 25 ;
+initial begin
+  $display("The decimal value of a is: %d", a) ;
+  $display("The octal value of a is: %o", a) ;
+  $display("The binary value of a is: %b", a) ;
+  $display("The hexadecimal value of a is: %h", a) ;
+  $display("The decimal value of b is: %d", b) ;
+  $display("The hexadecimal value of b is: %h", b) ;
+  $display("The binary value of b is: %b", b) ;
+  $display("The octal value of b is: %o", b) ;
+end
+endmodule
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vdisplaying_numbers
+The decimal value of a is:  20
+The octal value of a is: 024
+The binary value of a is: 000010100
+The hexadecimal value of a is: 014
+The decimal value of b is:  25
+The hexadecimal value of b is: 19
+The binary value of b is: 00011001
+The octal value of b is: 031
+
+2)
+module display_all;
+reg [8:0] a = 16 ;
+initial begin
+  $display(a, ";") ;
+  $displayb(a, ";") ;
+  $displayo(a, ";") ;
+  $displayh(a, ";") ;
+end
+endmodule
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vdisplay_all
+ 16;
+000010000;
+020;
+010;
+
+3)
+module display_dec;
+reg [4:0] a, b, c, d, e ;
+initial begin
+  a = 5'bxxxxx ;
+  $display("Value a: %d", a) ; 
+  b = 5'b1x1x0 ;
+  $display("Value b: %d", b) ; 
+  c = 5'bzzzzz ;
+  $display("Value c: %d", c) ; 
+  d = 5'b10zz1 ;
+  $display("Value d: %d", d) ; 
+  e = 5'b1x0zz ;
+  $display("value e: %d",e) ;
+end
+endmodule
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vdisplay_dec
+Value a:  0
+Value b: 20
+Value c:  0
+Value d:  0
+value e:  0
+
+4)
+module display_dec;
+reg [4:0] a, b, c, d, e ;
+initial begin
+  a = 5'bxxxxx ;
+  $display("Value a: %o", a) ; 
+  b = 5'b1x1x0 ;
+  $display("Value b: %o", b) ; 
+  c = 5'bzzzzz ;
+  $display("Value c: %o", c) ; 
+  d = 5'b10zz1 ;
+  $display("Value d: %o", d) ; 
+  e = 5'b1x0zz ;
+  $display("value e: %o",e) ;
+end
+endmodule
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vdisplay_oct
+Value a: 00
+Value b: 24
+Value c: 00
+Value d: 00
+value e: 00
+
+5)
+module display_dec;
+reg [4:0] a, b, c, d, e ;
+initial begin
+  a = 5'bxxxxx ;
+  $display("Value a: %h", a) ; 
+  b = 5'b1x1x0 ;
+  $display("Value b: %h", b) ; 
+  c = 5'bzzzzz ;
+  $display("Value c: %h", c) ; 
+  d = 5'b10zz1 ;
+  $display("Value d: %h", d) ; 
+  e = 5'b1x0zz ;
+  $display("value e: %h",e) ;
+end
+endmodule
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vdisplay_hex
+Value a: 00
+Value b: 14
+Value c: 00
+Value d: 00
+value e: 00
+
+data types
+1)
+`timescale 1ns/1ns
+//Module declaration with port list
+module wire_declaration(in, out);
+//Input and output wire declarations
+input wire [3:0] in;
+output wire [3:0] out;
+//continuous assignment for output wire
+assign out = in;
+endmodule: wire_declaration
+
+testbench
+`include "wire_declaration.v"
+module wire_declaration_tb;
+wire [3:0] out;
+reg [3:0] in;
+//Design module instantiation by order
+wire_declaration dut(in, out);
+initial begin
+  $monitor("Output value in binary = %b \nOutput value in decimal = %d \nOutput value in hexadecimal = %h \nOutput value in octal = %o\n\n", out, out, out, out);
+  //Driving stimulus
+  in = 4'b1001;
+  #1;
+  in = 4'b1111;
+  #5;
+  in = 4'b1110;
+end
+endmodule: wire_declaration_tb
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vwire_declaration_tb
+Output value in binary = 1001
+Output value in decimal =  9
+Output value in hexadecimal = 9
+Output value in octal = 11
+
+
+Output value in binary = 1111
+Output value in decimal = 15
+Output value in hexadecimal = f
+Output value in octal = 17
+
+
+Output value in binary = 1111
+Output value in decimal = 15
+Output value in hexadecimal = f
+Output value in octal = 17
+
+
+Output value in binary = 1110
+Output value in decimal = 14
+Output value in hexadecimal = e
+Output value in octal = 16
+
+
+Output value in binary = 1110
+Output value in decimal = 14
+Output value in hexadecimal = e
+Output value in octal = 16
+
+2)
+module reg_wire_integer(in, out);
+input [7:0] in;
+output reg [7:0] out;
+integer temp = 2;
+always @(in) begin
+  out = in + 8'd2;
+end
+endmodule
+
+testbench:
+`timescale 1ns/1ns
+`include "reg_wire_integer.v"
+module reg_wire_integer_tb;
+reg [7:0] in;
+wire [7:0] out;
+reg_wire_integer dut(in, out);
+initial begin
+  $monitor("Output value = %d", out);
+  in = 2;
+  #1;
+  in = 5;
+  #2;
+  in = 6;
+end
+endmodule
+ 
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vreg_wire_integer_tb
+Output value =   4
+Output value =   7
+Output value =   7
+Output value =   8
+Output value =   8
+
+part select:
+1)
+module part_select_example (
+  input wire [7:0] input_vector,
+  output reg [3:0] output_vector
+);
+assign output_vector = input_vector[6:3];
+endmodule
+
+testbench:
+module part_select_example_tb;
+reg [7:0] input_vector;
+wire [3:0] output_vector;
+part_select_example dut (
+  .input_vector(input_vector),
+  .output_vector(output_vector)
+);
+initial begin
+  input_vector = 8'b10101010;
+  $display("Input vector: %b", input_vector);
+  #10;
+  $display("Output vector: %b", output_vector);
+  // End simulation
+  $finish;
+end
+endmodule
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vpart_select_example_tb
+Input vector: 10101010
+Output vector: 0101
+
+2)
+
+module memory_2_D( input [15:0] in1[0:7], output reg [15:0] out[0:7] );
+always@(*) begin
+  for (integer i=0;i<8;i++)
+  begin
+    out[i] = in1[i];
+  end
+end
+endmodule
+
+testbench:
+`include "memory_2_D.v"
+module tb;
+reg [15:0] in1[0:7];
+wire [15:0] out[0:7];
+memory_2_D dut (.in1 (in1), .out (out));
+initial begin
+for (integer i=0; i<8; i=i+1) begin
+in1[i] = i+1 ;
+#10 $display("out[%0d] = %0d", i, out[i]);
+end
+$finish;
+end
+endmodule
+
+output:
+out[0] = 1
+out[1] = 2
+out[2] = 3
+out[3] = 4
+out[4] = 5
+out[5] = 6
+out[6] = 7
+out[7] = 8
+
+Assignment1:
+module increment(in,out);
+output reg[31:0] out;
+input in;
+integer temp=5;
+always@(in)
+begin
+    out=temp+5;
+    temp=out;
+end
+endmodule
+
+testbench:
+`timescale 1ns/1ns
+`include "increment.v"
+module increment_tb;
+reg in;
+wire[31:0] out;
+increment dut(in,out);
+initial 
+begin
+  in = 0;
+  #10 in = 0;
+  #10 in = 1;
+  #10 in = 0;
+  #10 in = 1;
+end
+always@(in)
+begin
+  $display("Input: %b, Output: %d, Output (hex): %h", in, out, out);
+end
+endmodule
+
+output:
+prajwal@DESKTOP-8U4IRQ2:~/verilog/verilog_lab1$ ./obj_dir/Vincrement_tb
+Input: 0, Output:          0, Output (hex): 00000000
+Input: 1, Output:         10, Output (hex): 0000000a
+Input: 0, Output:         15, Output (hex): 0000000f
+Input: 1, Output:         20, Output (hex): 00000014

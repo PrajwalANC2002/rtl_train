@@ -1,0 +1,494 @@
+1) Write a Verilog code for a Shift register with asynchronous active low reset,
+clock, shift, [7:0] data_in as inputs and [7:0] data_out as output. Whenever the
+“shift” is low, it should perform the left shift operation and whenever the
+“shift” is high, it should perform the right shift operation. Write the testbench
+to verify the same.
+
+design:
+module shift(clk, rst, shift, data_in, data_out);
+  input clk, rst, shift;
+  input data_in;
+  output reg [7:0]data_out;
+  parameter WIDTH = 8;
+  reg [WIDTH-1:0] shreg;
+  always @(posedge clk or posedge rst)
+    begin
+      if(~rst)shreg=0;
+      else if(~shift)
+        begin
+          for(integer i = 0; i < WIDTH-1; i = i+1)
+            shreg[i+1] <= shreg[i];
+            shreg[0] <= data_in;
+        end 
+      else if(shift)
+        begin
+          for(integer i = WIDTH-1; i >0; i = i-1)
+            shreg[i-1] <= shreg[i];
+          shreg[WIDTH-1] <= data_in;
+        end
+    end
+    
+  assign data_out[7:0] = shreg[7:0];
+endmodule
+
+testbench:
+module shift_tb;
+  reg clk, rst, shift;
+  reg data_in;
+  wire [7:0]data_out;
+  
+  shift dut(clk, rst, shift, data_in, data_out);
+  
+  always #1 clk = ~clk;
+  
+  initial begin
+    clk = 1'b0;
+    rst = 1'b0;
+    shift = 1'b0;
+    data_in = 1'b0;
+    $monitor("clk = %b,data_in=%b, rst = %b, (0=left shift/1=rigth shift) shift = %b after shift : %b", clk,data_in, rst, shift, data_out);
+    #2
+    rst = 1'b1;
+    shift = 1'b0;
+    data_in = 1'b1;
+    #10
+    rst = 1'b1;
+    shift = 1'b0;
+    data_in = 1'b1;
+    #10
+    rst = 1'b1;
+    shift = 1'b0;
+    data_in = 1'b0;
+    #8
+    rst=1'b0;
+    #2
+    rst = 1'b1;
+    shift = 1'b1;
+    data_in = 1'b1;
+    #10
+    rst = 1'b1;
+    shift = 1'b1;
+    data_in = 1'b1;
+    #10
+    rst = 1'b1;
+    shift = 1'b1;
+    data_in = 1'b0;
+    #30 $finish;
+  end
+endmodule
+
+output:
+# run -all
+# clk = 0,data_in=0, rst = 0, (0=left shift/1=rigth shift) shift = 0 after shift : xxxxxxxx
+# clk = 1,data_in=0, rst = 0, (0=left shift/1=rigth shift) shift = 0 after shift : 00000000
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00000001
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00000011
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00000011
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00000111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00000111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00001111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00001111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00011111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00011111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 00111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 01111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 01111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111110
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111110
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111100
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111100
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11111000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 0 after shift : 11110000
+# clk = 0,data_in=0, rst = 0, (0=left shift/1=rigth shift) shift = 0 after shift : 11110000
+# clk = 1,data_in=0, rst = 0, (0=left shift/1=rigth shift) shift = 0 after shift : 00000000
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 10000000
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11000000
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11000000
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11100000
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11100000
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11110000
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11110000
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111000
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111000
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111100
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111100
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111110
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111110
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 0,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 1,data_in=1, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 11111111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 01111111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 01111111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00111111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00111111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00011111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00011111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00001111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00001111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000111
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000111
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000011
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000011
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000001
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000001
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 0,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+# clk = 1,data_in=0, rst = 1, (0=left shift/1=rigth shift) shift = 1 after shift : 00000000
+
+2) Write a Verilog code for Universal Shift Register.
+design:
+module usr(mode,rst,data_in,data_out,clk,msb_in,lsb_in);
+  input [1:0] mode;
+  input [3:0] data_in;
+  output reg [3:0] data_out;
+  input msb_in,lsb_in,clk,rst;
+  always@(posedge clk)
+    begin
+      if(!rst)data_out<=0;
+      case(mode)
+        2'b00:data_out<=data_out;
+        2'b01:data_out<={msb_in,data_in[3:1]};
+        2'b10:data_out<={data_in[2:0],lsb_in};
+        2'b11:data_out<=data_in;
+      endcase
+    end
+endmodule
+
+testbench:
+module usr_tb;
+  reg [1:0] mode;
+  reg [3:0] data_in;
+  wire [3:0] data_out;
+  reg msb_in,lsb_in,clk=1'b0,rst;
+  usr dut(mode,rst,data_in,data_out,clk,msb_in,lsb_in);
+  always #1 clk=~clk;
+  initial begin
+    $monitor("clk=%b mode=%b,rst=%b,data_in=%b,msb_in=%b,lsb_in=%b,data_out=%b",clk,mode,rst,data_in,msb_in,lsb_in,data_out);
+    rst=1'b0;clk=1'b0;data_in=4'b1010;
+    #2 rst=1'b1;mode=2'b00;
+    #2 msb_in=1'b1;mode=2'b01;
+    #2 msb_in=1'b0;
+    #2 lsb_in=1;mode=2'b10;
+    #2 lsb_in=1'b0;
+    #2 mode=2'b11;
+    #2 $finish;
+  end
+endmodule
+
+output:
+# run -all
+# clk=0 mode=xx,rst=0,data_in=1010,msb_in=x,lsb_in=x,data_out=xxxx
+# clk=1 mode=xx,rst=0,data_in=1010,msb_in=x,lsb_in=x,data_out=0000
+# clk=0 mode=00,rst=1,data_in=1010,msb_in=x,lsb_in=x,data_out=0000
+# clk=1 mode=00,rst=1,data_in=1010,msb_in=x,lsb_in=x,data_out=0000
+# clk=0 mode=01,rst=1,data_in=1010,msb_in=1,lsb_in=x,data_out=0000
+# clk=1 mode=01,rst=1,data_in=1010,msb_in=1,lsb_in=x,data_out=1101
+# clk=0 mode=01,rst=1,data_in=1010,msb_in=0,lsb_in=x,data_out=1101
+# clk=1 mode=01,rst=1,data_in=1010,msb_in=0,lsb_in=x,data_out=0101
+# clk=0 mode=10,rst=1,data_in=1010,msb_in=0,lsb_in=1,data_out=0101
+# clk=1 mode=10,rst=1,data_in=1010,msb_in=0,lsb_in=1,data_out=0101
+# clk=0 mode=10,rst=1,data_in=1010,msb_in=0,lsb_in=0,data_out=0101
+# clk=1 mode=10,rst=1,data_in=1010,msb_in=0,lsb_in=0,data_out=0100
+# clk=0 mode=11,rst=1,data_in=1010,msb_in=0,lsb_in=0,data_out=0100
+# clk=1 mode=11,rst=1,data_in=1010,msb_in=0,lsb_in=0,data_out=1010
+
+3)Write a function to find the factorial of a number. And write the associated
+testbench to give inputs and to display the factorial output.
+
+design:
+module factorial(num, fact);
+  input [31:0] num;
+  output [31:0] fact;
+  
+  function [31:0] factorial;
+    input [31:0] num;
+      factorial = 1;
+      for(integer i = 1; i <= num; i = i + 1) 
+        factorial = factorial * i;
+  endfunction
+  
+  assign fact = factorial(num);
+  
+endmodule
+
+testbench:
+module factorial_tb;
+  reg [31:0] num;
+  wire [31:0] fact;
+  
+  factorial dut(num, fact);
+  
+  initial begin
+    $monitor("factorial of %0d is = %d", num, fact);
+    for(integer i = 0; i <= 10; i = i + 1)
+      begin
+        num = i;
+        #1;
+      end
+  end
+endmodule
+
+output:
+# run -all
+# factorial of 0 is =          1
+# factorial of 1 is =          1
+# factorial of 2 is =          2
+# factorial of 3 is =          6
+# factorial of 4 is =         24
+# factorial of 5 is =        120
+# factorial of 6 is =        720
+# factorial of 7 is =       5040
+# factorial of 8 is =      40320
+# factorial of 9 is =     362880
+# factorial of 10 is =    3628800
+
+4)Write 2 functions, even_parity, odd_parity. Take a number n and pass it to both
+the functions. If the number of 1s is odd then even_parity_bit is set to 1 in
+even_parity function, else it is set to 0 and vice versa in odd_parity functions.
+Return even_parity_bit and odd_parity_bit.
+
+design:
+module even_odd_parity(num, even_parity, odd_parity);
+  input [3:0] num;
+  output even_parity, odd_parity;
+  
+  function even_parity_f;
+    input [3:0] num;
+
+    even_parity_f = !(^num);
+
+  endfunction
+  
+  function odd_parity_f;
+    input [3:0] num;
+   
+    odd_parity_f = ^num;
+ 
+  endfunction
+  
+  assign even_parity = even_parity_f(num);
+  assign odd_parity = odd_parity_f(num);
+  
+endmodule
+
+testbench:
+module even_odd_parity_tb;
+  reg [3:0] num;
+  wire even_parity, odd_parity;
+  
+  even_odd_parity dut(num, even_parity, odd_parity);
+  
+  initial begin
+    $monitor(" num = %b even_parity = %b odd_parity = %b", num, even_parity, odd_parity);
+    num = 6;
+    #5
+    num = 1;
+    #5
+    num = 5;
+    #5
+    num = 10;
+    #5
+    num=11;
+  end
+endmodule
+
+output:
+# run -all
+#  num = 0110 even_parity = 1 odd_parity = 0
+#  num = 0001 even_parity = 0 odd_parity = 1
+#  num = 0101 even_parity = 1 odd_parity = 0
+#  num = 1010 even_parity = 1 odd_parity = 0
+#  num = 1011 even_parity = 0 odd_parity = 1
+# exit
+
+5)Write a function to check if a number is even or odd using % operator. Return 1
+if the number is even, else return 0. And write the associated testbench to give
+inputs and to display the function output.
+
+design:
+module even_odd(num, even_odd);
+  input [31:0] num;
+  output even_odd;
+  
+  function even_odd_f;
+    input [31:0] num;
+   
+    even_odd_f = (num % 2);
+    if(even_odd_f) return 0;
+    else return 1;
+    
+  endfunction
+  
+  assign even_odd = even_odd_f(num);
+  
+endmodule
+
+testbench:
+module even_odd_tb;
+  reg [31:0] num;
+  wire even_odd;
+  
+  even_odd dut(num, even_odd);
+  
+  initial begin
+    $monitor("num = %0d even=1 ,odd=0 check : %b", num, even_odd);
+    num = 6;
+    #5
+    num = 1;
+    #5
+    num = 5;
+    #5
+    num = 10;
+    #5
+    num=11;
+  end
+endmodule
+
+output:
+# run -all
+# num = 6 even=1 ,odd=0 check : 1
+# num = 1 even=1 ,odd=0 check : 0
+# num = 5 even=1 ,odd=0 check : 0
+# num = 10 even=1 ,odd=0 check : 1
+# num = 11 even=1 ,odd=0 check : 0
+
+6)Write a function to check if a number is even or odd without using % operator.
+Return 1 if the number is even, else return 0. And write the associated
+testbench to give inputs and to display the function output
+
+design:
+module even_odd(num, even_odd);
+  input [31:0] num;
+  output even_odd;
+  
+  function even_odd_f;
+    input [31:0] num;
+   
+    even_odd_f = num&1;
+    if(even_odd_f) return 0;
+    else return 1;
+    
+  endfunction
+  
+  assign even_odd = even_odd_f(num);
+  
+endmodule
+
+testbench:
+module even_odd_tb;
+  reg [31:0] num;
+  wire even_odd;
+  
+  even_odd dut(num, even_odd);
+  
+  initial begin
+    $monitor("num = %0d even=1 ,odd=0 check : %b", num, even_odd);
+    num = 6;
+    #5
+    num = 1;
+    #5
+    num = 5;
+    #5
+    num = 10;
+    #5
+    num=11;
+  end
+endmodule
+
+output:
+# run -all
+# num = 6 even=1 ,odd=0 check : 1
+# num = 1 even=1 ,odd=0 check : 0
+# num = 5 even=1 ,odd=0 check : 0
+# num = 10 even=1 ,odd=0 check : 1
+# num = 11 even=1 ,odd=0 check : 0
+# exit
+
+7)Write a function to print prime numbers from 1 to 100(Only Testbench)
+testbench:
+module print_primes;
+  
+  function is_prime;
+    input integer num;
+     reg [7:0]count;
+     count=0;
+    
+    for(integer i = 1; i <= num; i = i + 1)
+      begin
+        if(num%i==0)count=count+1;
+        else count=count;
+      end
+    is_prime=(count==2);
+  endfunction
+  
+  initial begin
+    
+    for(integer j = 1; j <= 100; j = j + 1)
+      begin
+        if(is_prime(j))
+          begin
+          $display("%0d",j);
+          end
+      end
+  end
+endmodule
+
+output:
+# run -all
+# 2
+# 3
+# 5
+# 7
+# 11
+# 13
+# 17
+# 19
+# 23
+# 29
+# 31
+# 37
+# 41
+# 43
+# 47
+# 53
+# 59
+# 61
+# 67
+# 71
+# 73
+# 79
+# 83
+# 89
+# 97
+# exit
+
+
+
+

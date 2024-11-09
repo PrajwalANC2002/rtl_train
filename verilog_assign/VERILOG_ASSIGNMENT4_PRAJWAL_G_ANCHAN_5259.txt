@@ -1,0 +1,877 @@
+1)
+module alu(a,b,alu_out,alu_sel);
+  input [3:0] a,b;
+  input [3:0] alu_sel;
+  output reg [3:0] alu_out;
+  always@(*)
+    begin
+  case(alu_sel)
+    4'b0000:alu_out=a+b;
+    4'b0001:alu_out=a-b;
+    4'b0010:alu_out=a*b;
+    4'b0011:alu_out=a/b;
+    4'b0100:alu_out=a<<1;
+    4'b0101:alu_out=a>>1;
+    4'b0110:alu_out=((a<<1)|(a>>(4-1)));
+    4'b0111:alu_out=((a>>1)|(a<<(4-1)));
+    4'b1000:alu_out=a & b;
+    4'b1001:alu_out=a | b;
+    4'b1010:alu_out=a ^ b;
+    4'b1011:alu_out=~(a | b);
+    4'b1100:alu_out=~(a & b);
+    4'b1101:alu_out=~(a ^ b);
+    4'b1110:alu_out=(a>b)?1'b1:1'b0;
+    4'b1111:alu_out=(a==b)?1'b1:1'b0;
+  endcase
+    end
+endmodule:alu
+testbench:
+`timescale 1ns/1ns
+module alu_tb;
+  reg [3:0] a,b;
+  reg [3:0] alu_sel;
+  wire [3:0] alu_out;
+  alu dut(a,b,alu_out,alu_sel);
+  initial begin
+    alu_sel=4'b0000;a=4'b0011;b=4'b0010;
+    $monitor("alu output for select line %b =%b",alu_sel,alu_out);
+    #1 alu_sel=4'b0000;
+    #1 alu_sel=4'b0001;
+    #1 alu_sel=4'b0010;
+    #1 alu_sel=4'b0011;
+    #1 alu_sel=4'b0100;
+    #1 alu_sel=4'b0101;
+    #1 alu_sel=4'b0110;
+    #1 alu_sel=4'b0111;
+    #1 alu_sel=4'b1000;
+    #1 alu_sel=4'b1001;
+    #1 alu_sel=4'b1010;
+    #1 alu_sel=4'b1011;
+    #1 alu_sel=4'b1100;
+    #1 alu_sel=4'b1101;
+    #1 alu_sel=4'b1110;
+    #1 alu_sel=4'b1111;
+  end
+endmodule
+
+output:
+# run -all
+# alu output for select line 0000 =0101
+# alu output for select line 0001 =0001
+# alu output for select line 0010 =0110
+# alu output for select line 0011 =0001
+# alu output for select line 0100 =0110
+# alu output for select line 0101 =0001
+# alu output for select line 0110 =0110
+# alu output for select line 0111 =1001
+# alu output for select line 1000 =0010
+# alu output for select line 1001 =0011
+# alu output for select line 1010 =0001
+# alu output for select line 1011 =1100
+# alu output for select line 1100 =1101
+# alu output for select line 1101 =1110
+# alu output for select line 1110 =0001
+# alu output for select line 1111 =0000
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2)
+
+design:
+module half_adder(a,b,sum,carry);
+  input a,b;
+  output reg sum,carry;
+  always@(a or b)
+    begin
+      sum=(~a&b)|(a&~b);
+      carry=a&b;
+    end
+endmodule:half_adder
+testbench:
+`timescale 1ns/1ns
+module half_adder_tb;
+  reg a,b;
+  wire sum,carry;
+  half_adder dut(a,b,sum,carry);
+  initial begin
+    a=1'b0;b=1'b0;
+    $monitor("for input a=%b ,b=%b,sum=%b,carry=%b",a,b,sum,carry);
+    #1 a=1'b0;b=1'b0;
+    #1 a=1'b0;b=1'b1;
+    #1 a=1'b1;b=1'b0;
+    #1 a=1'b1;b=1'b1;
+    #1 $finish;
+  end
+endmodule:half_adder_tb
+
+output:
+# run -all
+# for input a=0 ,b=0,sum=0,carry=0
+# for input a=0 ,b=1,sum=1,carry=0
+# for input a=1 ,b=0,sum=1,carry=0
+# for input a=1 ,b=1,sum=0,carry=1
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3)
+design:
+module fulladder(a,b,cin,sum,cout);
+  input a,b,cin;
+  output reg cout,sum;
+  always@(a or b or cin)
+    begin
+      sum=a^b^cin;
+      cout=cin&(a|b)|(a&b);
+    end
+endmodule:fulladder
+testbench:
+`timescale 1ns/1ns
+module fulladder_tb;
+  reg a,b,cin;
+  wire cout,sum;
+  fulladder dut(a,b,cin,sum,cout);
+  initial begin
+    a=1'b0;b=1'b0;cin=1'b0;
+    $monitor("for a=%b ,b=%b ,cin=%b,sum=%b,cout=%b",a,b,cin,sum,cout);
+    #1 a=1'b0;b=1'b0;cin=1'b0;
+    #1 a=1'b0;b=1'b0;cin=1'b1;
+    #1 a=1'b0;b=1'b1;cin=1'b0;
+    #1 a=1'b0;b=1'b1;cin=1'b1;
+    #1 a=1'b1;b=1'b0;cin=1'b0;
+    #1 a=1'b1;b=1'b0;cin=1'b1;
+    #1 a=1'b1;b=1'b1;cin=1'b0;
+    #1 a=1'b1;b=1'b1;cin=1'b1;
+  end
+endmodule:fulladder_tb
+    
+output:
+# run -all
+# for a=0 ,b=0 ,cin=0,sum=0,cout=0
+# for a=0 ,b=0 ,cin=1,sum=1,cout=0
+# for a=0 ,b=1 ,cin=0,sum=1,cout=0
+# for a=0 ,b=1 ,cin=1,sum=0,cout=1
+# for a=1 ,b=0 ,cin=0,sum=1,cout=0
+# for a=1 ,b=0 ,cin=1,sum=0,cout=1
+# for a=1 ,b=1 ,cin=0,sum=0,cout=1
+# for a=1 ,b=1 ,cin=1,sum=1,cout=1
+# exit
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4)
+module half_subtractor(a,b,diff,borrow);
+  input a,b;
+  output reg diff,borrow;
+  always@(a or b)
+    begin
+      diff=a^b;
+      borrow=(~a)&b;
+    end
+endmodule:half_subtractor
+testbench:
+`timescale 1ns/1ns
+module half_subtractor_tb;
+  reg a,b;
+  wire diff,borrow;
+  half_subtractor dut(a,b,diff,borrow);
+  initial begin
+    a=1'b0;b=1'b0;
+ $monitor("a=%b,b=%b,difference=%b,borrow=%b",a,b,diff,borrow);
+    #1 a=1'b0;b=1'b0;
+    #1 a=1'b0;b=1'b1;
+    #1 a=1'b1;b=1'b0;
+    #1 a=1'b1;b=1'b1;
+  end
+endmodule:half_subtractor_tb
+  
+output:
+# run -all
+# a=0,b=0,difference=0,borrow=0
+# a=0,b=1,difference=1,borrow=1
+# a=1,b=0,difference=1,borrow=0
+# a=1,b=1,difference=0,borrow=0
+# exit
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5)
+module full_subtractor(a,b,bor_in,diff,bor_out);
+  input a,b,bor_in;
+  output reg bor_out,diff;
+  always@(a or b or bor_in)
+    begin
+      diff=a^b^bor_in;
+      bor_out=b&bor_in|(~a)&bor_in|(~a)&b;
+    end
+endmodule:full_subtractor
+
+testbench:
+`timescale 1ns/1ns
+module full_subtracator_tb;
+  reg a,b,bor_in;
+  wire bor_out,diff;
+  full_subtractor dut(a,b,bor_in,diff,bor_out);
+  initial begin
+    a=1'b0;b=1'b0;bor_in=1'b0;
+    $monitor("for a=%b ,b=%b ,borrow_in=%b,difference=%b,borrow_out=%b",a,b,bor_in,diff,bor_out);
+    #1 a=1'b0;b=1'b0;bor_in=1'b0;
+    #1 a=1'b0;b=1'b0;bor_in=1'b1;
+    #1 a=1'b0;b=1'b1;bor_in=1'b0;
+    #1 a=1'b0;b=1'b1;bor_in=1'b1;
+    #1 a=1'b1;b=1'b0;bor_in=1'b0;
+    #1 a=1'b1;b=1'b0;bor_in=1'b1;
+    #1 a=1'b1;b=1'b1;bor_in=1'b0;
+    #1 a=1'b1;b=1'b1;bor_in=1'b1;
+  end
+endmodule:full_subtracator_tb
+    
+output:
+# run -all
+# for a=0 ,b=0 ,borrow_in=0,difference=0,borrow_out=0
+# for a=0 ,b=0 ,borrow_in=1,difference=1,borrow_out=1
+# for a=0 ,b=1 ,borrow_in=0,difference=1,borrow_out=1
+# for a=0 ,b=1 ,borrow_in=1,difference=0,borrow_out=1
+# for a=1 ,b=0 ,borrow_in=0,difference=1,borrow_out=0
+# for a=1 ,b=0 ,borrow_in=1,difference=0,borrow_out=0
+# for a=1 ,b=1 ,borrow_in=0,difference=0,borrow_out=0
+# for a=1 ,b=1 ,borrow_in=1,difference=1,borrow_out=1
+# exit
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+6)
+Write a Verilog code for a synchronous D latch with active low reset and
+enable signal. Write a code for the testbench and give appropriate inputs to
+test all possible combinations.
+
+design:
+module d_latch(d,en_n,reset_n,q);
+  input d,en_n,reset_n;
+  output reg q;
+  always@(d or en_n or reset_n)
+    begin
+      if(!reset_n)
+      q<=0;
+      else if(!en_n)
+        q<=d;
+    end
+endmodule:d_latch
+  
+testbench:
+`timescale 1ns/1ns
+module d_latch_tb;
+  reg d,en_n,reset_n;
+  wire q;
+  d_latch dut(d,en_n,reset_n,q);
+  initial begin
+    d=1'b0;en_n=1'b1;reset_n=1'b1;
+    $monitor("for en=%b,active low reset=%b,d=%b,output q=%b",en_n,reset_n,d,q);
+    #1 d=1'b0;en_n=1'b0;reset_n=1'b1;
+    #1 d=1'b1;en_n=1'b1;reset_n=1'b1;
+    #1 d=1'b1;en_n=1'b0;reset_n=1'b1;
+    #1 d=1'b0;en_n=1'b1;reset_n=1'b1;
+    #1 d=1'b1;en_n=1'b0;reset_n=1'b0;
+    #1 $finish;
+  end
+endmodule:d_latch_tb
+    
+ output:
+# run -all
+# for en=1,active low reset=1,d=0,output q=x
+# for en=0,active low reset=1,d=0,output q=0
+# for en=1,active low reset=1,d=1,output q=0
+# for en=0,active low reset=1,d=1,output q=1
+# for en=1,active low reset=1,d=0,output q=1
+# for en=0,active low reset=0,d=1,output q=0
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+7)
+ Write a Verilog code for an asynchronous SR latch with active low reset
+and enable signal. Write a code for the testbench and give appropriate
+inputs to test all possible combinations.
+
+module sr_latch(s_n,r_n,q,q_bar,en_n);
+  input s_n,r_n,en_n;
+  output reg q,q_bar;
+  always@(s_n or r_n )
+    begin
+      if(!r_n && !en_n)
+      begin
+        q<=1'b0;
+        q_bar<=1'b1;
+      end
+      else if(!s_n && !en_n)
+    begin
+      q<=1'b1;
+      q_bar<=1'b0;
+    end
+    end
+endmodule:sr_latch
+  
+testbench:
+module sr_latch_tb;
+  reg  s_n,r_n,en_n;
+  wire q,q_bar;
+  sr_latch dut(s_n,r_n,q,q_bar,en_n);
+  initial begin
+    s_n=1'b1;r_n=1'b1;en_n=1'b1;
+    $monitor("ative low set=%b,active low reset=%b,active low enable=%b,output q=%b,output q_bar=%b",s_n,r_n,en_n,q,q_bar);
+     #1 s_n=1'b1;en_n=1'b0;r_n=1'b1;
+    #1 s_n=1'b0;en_n=1'b0;r_n=1'b1;
+    #1 s_n=1'b1;en_n=1'b0;r_n=1'b0;
+    #1 s_n=1'b1;en_n=1'b0;r_n=1'b1;
+    #1 s_n=1'b0;en_n=1'b1;r_n=1'b1;
+    #1 $finish;
+  end
+endmodule:sr_latch_tb
+    
+output:
+# ative low set=1,active low reset=1,active low enable=1,output q=x,output q_bar=x
+# ative low set=1,active low reset=1,active low enable=0,output q=x,output q_bar=x
+# ative low set=0,active low reset=1,active low enable=0,output q=1,output q_bar=0
+# ative low set=1,active low reset=0,active low enable=0,output q=0,output q_bar=1
+# ative low set=1,active low reset=1,active low enable=0,output q=0,output q_bar=1
+# ative low set=0,active low reset=1,active low enable=1,output q=0,output q_bar=1
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+8)
+Write a Verilog code for a synchronous D flip flop with active low reset and write a
+code for the testbench and give appropriate inputs to test all possible
+combinations.
+module d_ff(d,clk,reset_n,q);
+  input d,clk,reset_n;
+  output reg q;
+  always@(posedge clk)
+    begin
+      if(~reset_n)
+      q<=0;
+      else
+        q<=d;
+    end
+endmodule:d_ff
+  
+testbench:
+`timescale 1ns/1ns
+module d_ff_tb;
+  reg d,clk,reset_n;
+  wire q;
+  d_ff dut(d,clk,reset_n,q);
+  always #1 clk=~clk;
+  initial begin
+    d=1'b0;clk=1'b0;reset_n=1'b1;
+    $monitor("for clk=%b,active low reset=%b,d=%b,output q=%b",clk,reset_n,d,q);
+    #1 d=1'b0;reset_n=1'b1;
+    #1 d=1'b1;reset_n=1'b1;
+    #1 d=1'b1;reset_n=1'b1;
+    #1 d=1'b0;reset_n=1'b1;
+    #1 d=1'b1;reset_n=1'b1;
+    #1 d=1'b1;reset_n=1'b0;//synchronous check
+    #1 d=1'b1;reset_n=1'b0;
+    #1$finish;
+  end
+endmodule:d_ff_tb
+    
+output:
+# run -all
+# for clk=0,active low reset=1,d=0,output q=x
+# for clk=1,active low reset=1,d=0,output q=0
+# for clk=0,active low reset=1,d=1,output q=0
+# for clk=1,active low reset=1,d=1,output q=1
+# for clk=0,active low reset=1,d=0,output q=1
+# for clk=1,active low reset=1,d=1,output q=1
+# for clk=0,active low reset=0,d=1,output q=1
+# for clk=1,active low reset=0,d=1,output q=0
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+9)
+Write a Verilog code for asynchronous D flip flop with active high reset and verify
+the output. Write a code for the testbench and give appropriate inputs to test all
+possible combinations
+
+module d_ff(d,clk,reset,q);
+  input d,clk,reset;
+  output reg q;
+  always@(posedge clk or posedge reset)
+    begin
+      if(reset)
+      q<=0;
+      else
+        q<=d;
+    end
+endmodule:d_ff
+  
+testbench:
+`timescale 1ns/1ns
+module d_ff_tb;
+  reg d,clk,reset;
+  wire q;
+  d_ff dut(d,clk,reset,q);
+  always #1 clk=~clk;
+  initial begin
+    d=1'b0;clk=1'b0;reset=1'b0;
+    $monitor("for clk=%b,active high reset=%b,d=%b,output q=%b",clk,reset,d,q);
+    #1 d=1'b0;reset=1'b0;
+    #1 d=1'b1;reset=1'b0;
+    #1 d=1'b1;reset=1'b0;
+    #1 d=1'b0;reset=1'b0;
+    #1 d=1'b1;reset=1'b0;
+    #1 d=1'b1;reset=1'b1;//asynchronous check
+    #1 d=1'b1;reset=1'b1;
+    #1$finish;
+  end
+endmodule:d_ff_tb
+    
+output:
+# run -all
+# for clk=0,active high reset=0,d=0,output q=x
+# for clk=1,active high reset=0,d=0,output q=0
+# for clk=0,active high reset=0,d=1,output q=0
+# for clk=1,active high reset=0,d=1,output q=1
+# for clk=0,active high reset=0,d=0,output q=1
+# for clk=1,active high reset=0,d=1,output q=1
+# for clk=0,active high reset=1,d=1,output q=0
+# for clk=1,active high reset=1,d=1,output q=0
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+10)
+Write a Verilog code for S R flip flop and write a code for the testbench and give
+appropriate inputs to test all possible combinations. (Use case statement)
+
+module sr_ff(s,r,q,clk);
+  input s,r,clk;
+  output reg q;
+  always@(posedge clk)
+    begin
+      case({s,r})
+        2'b00:q<=q;
+        2'b01:q<=1'b0;
+        2'b10:q<=1'b1;
+        2'b11:q<=1'bx;
+      endcase
+    end
+endmodule:sr_ff
+
+testbench:
+`timescale 1ns/1ns
+module sr_ff_tb;
+  reg  s,r,clk;
+  wire q;
+  sr_ff dut(s,r,q,clk);
+  initial begin
+    clk=1'b0;
+    forever #1 clk=~clk;
+  end
+  initial begin
+    s=1'b0;r=1'b0;
+    $monitor("ative high set=%b,active high reset=%b,clk=%b,output q=%b",s,r,clk,q);
+    #1 s=1'b1;r=1'b0;
+    #1 s=1'b1;r=1'b1;
+    #1 s=1'b0;r=1'b1;
+    #1 s=1'b1;r=1'b1;
+    #1 s=1'b0;r=1'b0;//previous state for s=0 and r= 0
+    #1 s=1'b1;r=1'b0;
+    #1 s=1'b1;r=1'b1;
+    #1 $finish;
+  end
+endmodule:sr_ff_tb
+
+output:
+# run -all
+# ative high set=0,active high reset=0,clk=0,output q=x
+# ative high set=1,active high reset=0,clk=1,output q=1
+# ative high set=1,active high reset=1,clk=0,output q=1
+# ative high set=0,active high reset=1,clk=1,output q=0
+# ative high set=1,active high reset=1,clk=0,output q=0
+# ative high set=0,active high reset=0,clk=1,output q=0
+# ative high set=1,active high reset=0,clk=0,output q=0
+# ative high set=1,active high reset=1,clk=1,output q=x
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+11)
+Write a Verilog code for J K flipflop and write a code for the testbench and give
+appropriate inputs to test all possible combinations. (Use case statement)
+
+module jk_ff(j,k,q,clk);
+  input j,k,clk;
+  output reg q;
+  always@(posedge clk)
+    begin
+      case({j,k})
+        2'b00:q<=q;
+        2'b01:q<=1'b0;
+        2'b10:q<=1'b1;
+        2'b11:q<=~q;
+      endcase
+    end
+endmodule:jk_ff
+  
+testbench:
+`timescale 1ns/1ns
+module jk_ff_tb;
+  reg  j,k,clk;
+  wire q;
+  jk_ff dut(j,k,q,clk);
+  initial begin
+    clk=1'b0;
+    forever #1 clk=~clk;
+  end
+  initial begin
+    j=1'b0;k=1'b0;
+    $monitor("j=%b,k=%b,clk=%b,output q=%b",j,k,clk,q);
+    #1 j=1'b1;k=1'b0;
+    #1 j=1'b1;k=1'b1;
+    #1 j=1'b0;k=1'b1;
+    #1 j=1'b1;k=1'b1;
+    #1 j=1'b1;k=1'b0;
+    #1 j=1'b1;k=1'b1;
+    #1 j=1'b1;k=1'b1;//toggle state check
+    #1 j=1'b1;k=1'b1;
+    #1 j=1'b0;k=1'b0;//previous state
+    #1 $finish;
+  end
+endmodule:jk_ff_tb
+    
+output:
+# run -all
+# j=0,k=0,clk=0,output q=x
+# j=1,k=0,clk=1,output q=1
+# j=1,k=1,clk=0,output q=1
+# j=0,k=1,clk=1,output q=0
+# j=1,k=1,clk=0,output q=0
+# j=1,k=0,clk=1,output q=1
+# j=1,k=1,clk=0,output q=1
+# j=1,k=1,clk=1,output q=0
+# j=1,k=1,clk=0,output q=0
+# j=0,k=0,clk=1,output q=0
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+12)Write a Verilog code for T flipflop and write a code for the testbench and give appropriate inputs to test all possible combinations.
+
+module t_ff( clk,reset,t,q);
+  input clk,reset,t;
+  output reg q;
+  always@(posedge clk or posedge reset)
+    begin
+      if(reset)
+        q<=1'b0;
+      else
+        if(t)
+          q<=~q;
+      //else q<=q;
+    end
+endmodule
+
+testbench:
+
+module t_ff_tb;
+  reg clk,reset,t;
+  wire q;
+  t_ff uut(clk,reset,t,q);
+  always #5 clk=~clk;
+  initial begin
+    clk=0;reset=0;t=0;
+    $monitor("clk=%b,reset=%b,t=%b,q=%b",clk,reset,t,q);
+    #10 reset=1;t=1;
+    #10 t=0;
+    #10 reset=0;t=1;
+    #10 t=0;
+    #5 $finish;
+  end
+endmodule
+
+OUTPUT:
+clk=0,reset=0,t=0,q=x
+clk=1,reset=0,t=0,q=x
+clk=0,reset=1,t=1,q=0
+clk=1,reset=1,t=1,q=0
+clk=0,reset=1,t=0,q=0
+clk=1,reset=1,t=0,q=0
+clk=0,reset=0,t=1,q=0
+clk=1,reset=0,t=1,q=1
+clk=0,reset=0,t=0,q=1
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+13)Simulate a 3-bit up_counter and verify the output; where clk and reset are the inputs, count is the output. A sample code and its associated test bench is given below.
+
+module up_counter(clk,reset,count);
+  input clk,reset;
+  output reg [2:0] count;
+  always@(posedge clk or negedge reset)
+    begin
+      if(!reset)
+        count=3'b0;
+      else
+        count=count+1'b1;
+    end
+endmodule
+
+TESTBENCH:
+
+module up_counter_tb;
+ reg clk;
+ reg reset;
+ wire [2:0] count;
+
+  up_counter uut (clk,reset,count);
+ always #5 clk = ~clk;
+ 
+ initial begin
+  clk = 1'b0;
+  reset = 1'b0;
+  $monitor("clk=%b,reset=%b,count=%b",clk,reset,count);
+  #5 reset = 1'b1;
+  #80 $finish;
+ end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+
+OUTPUT:
+# clk=0,reset=0,count=000
+# clk=1,reset=1,count=001
+# clk=0,reset=1,count=001
+# clk=1,reset=1,count=010
+# clk=0,reset=1,count=010
+# clk=1,reset=1,count=011
+# clk=0,reset=1,count=011
+# clk=1,reset=1,count=100
+# clk=0,reset=1,count=100
+# clk=1,reset=1,count=101
+# clk=0,reset=1,count=101
+# clk=1,reset=1,count=110
+# clk=0,reset=1,count=110
+# clk=1,reset=1,count=111
+# clk=0,reset=1,count=111
+# clk=1,reset=1,count=000
+# clk=0,reset=1,count=000
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+14)Write a Verilog code for 3-bit down_counter and verify the output. Write a code for the testbench and give appropriate inputs to test all possible
+combinations.
+
+module down_counter(clk,reset,count);
+  input clk,reset;
+  output reg [2:0] count;
+  always@(posedge clk or negedge reset)
+    begin
+      if(!reset)
+        count=3'b111;
+      else
+        count=count-1'b1;
+    end
+endmodule
+
+TESTBENCH:
+
+module down_counter_tb;
+ reg clk;
+ reg reset;
+ wire [2:0] count;
+
+  down_counter uut (clk,reset,count);
+ always #5 clk = ~clk;
+ 
+ initial begin
+  clk = 1'b0;
+  reset = 1'b0;
+  $monitor("clk=%b,reset=%b,count=%b",clk,reset,count);
+  #5 reset = 1'b1;
+  #80 $finish;
+ end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+
+OUTPUT:
+# clk=0,reset=0,count=111
+# clk=1,reset=1,count=110
+# clk=0,reset=1,count=110
+# clk=1,reset=1,count=101
+# clk=0,reset=1,count=101
+# clk=1,reset=1,count=100
+# clk=0,reset=1,count=100
+# clk=1,reset=1,count=011
+# clk=0,reset=1,count=011
+# clk=1,reset=1,count=010
+# clk=0,reset=1,count=010
+# clk=1,reset=1,count=001
+# clk=0,reset=1,count=001
+# clk=1,reset=1,count=000
+# clk=0,reset=1,count=000
+# clk=1,reset=1,count=111
+# clk=0,reset=1,count=111
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+15)Write a Verilog code for a 4 bit up down counter, that counts from 0 to 15 in up counting mode and counts from 15 to 0 in down counting mode, and upon assertion of reset in up mode 
+the count must go to 0 and in down mode the count must go to 15. Write a code for the testbench and give appropriate inputs to test all possible combinations and verify the output
+
+module up_counter(clk,reset,up_down,count);
+  input clk,reset;
+  input up_down;
+  output reg [3:0] count;
+  always@(posedge clk or negedge reset)
+    begin
+       if(up_down)
+         begin
+        count=count+1'b1;
+           if(!reset)
+             count=4'b0000;
+         end
+      else if(!up_down)
+        begin
+        count=count-1'b1;
+          if(!reset)
+             count=4'b1111;
+        end
+    end
+endmodule
+
+TESTBENCH:
+
+module up_counter_tb;
+ reg clk;
+ reg reset,up_down;
+  wire [3:0] count;
+
+  up_counter uut (clk,reset,up_down,count);
+ always #1 clk = ~clk;
+ 
+ initial begin
+  clk = 1'b0;
+  reset = 1'b0;
+  up_down=1'b0;
+   $monitor("clk=%b,reset=%b,up_down=%b,count=%b",clk,reset,up_down,count); 
+  #1 reset=1'b1;up_down=1;
+  #20 reset=1'b0;//to check if the counter resets to 0000 during upcount
+  #1 reset=1'b1;up_down=1;
+  #40 reset=1'b1;up_down=0;
+  #15 reset=1'b0;//to check if the counter resets to 1111 during downcount
+  #1  reset=1'b1;up_down=0;
+  #32 $finish;
+ end
+  initial begin
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule
+
+output:
+
+# run 200ns
+# clk=0,reset=0,up_down=0,count=1111
+# clk=1,reset=1,up_down=1,count=0000
+# clk=0,reset=1,up_down=1,count=0000
+# clk=1,reset=1,up_down=1,count=0001
+# clk=0,reset=1,up_down=1,count=0001
+# clk=1,reset=1,up_down=1,count=0010
+# clk=0,reset=1,up_down=1,count=0010
+# clk=1,reset=1,up_down=1,count=0011
+# clk=0,reset=1,up_down=1,count=0011
+# clk=1,reset=1,up_down=1,count=0100
+# clk=0,reset=1,up_down=1,count=0100
+# clk=1,reset=1,up_down=1,count=0101
+# clk=0,reset=1,up_down=1,count=0101
+# clk=1,reset=1,up_down=1,count=0110
+# clk=0,reset=1,up_down=1,count=0110
+# clk=1,reset=1,up_down=1,count=0111
+# clk=0,reset=1,up_down=1,count=0111
+# clk=1,reset=1,up_down=1,count=1000
+# clk=0,reset=1,up_down=1,count=1000
+# clk=1,reset=1,up_down=1,count=1001
+# clk=0,reset=1,up_down=1,count=1001
+# clk=1,reset=0,up_down=1,count=0000
+# clk=0,reset=1,up_down=1,count=0000
+# clk=1,reset=1,up_down=1,count=0001
+# clk=0,reset=1,up_down=1,count=0001
+# clk=1,reset=1,up_down=1,count=0010
+# clk=0,reset=1,up_down=1,count=0010
+# clk=1,reset=1,up_down=1,count=0011
+# clk=0,reset=1,up_down=1,count=0011
+# clk=1,reset=1,up_down=1,count=0100
+# clk=0,reset=1,up_down=1,count=0100
+# clk=1,reset=1,up_down=1,count=0101
+# clk=0,reset=1,up_down=1,count=0101
+# clk=1,reset=1,up_down=1,count=0110
+# clk=0,reset=1,up_down=1,count=0110
+# clk=1,reset=1,up_down=1,count=0111
+# clk=0,reset=1,up_down=1,count=0111
+# clk=1,reset=1,up_down=1,count=1000
+# clk=0,reset=1,up_down=1,count=1000
+# clk=1,reset=1,up_down=1,count=1001
+# clk=0,reset=1,up_down=1,count=1001
+# clk=1,reset=1,up_down=1,count=1010
+# clk=0,reset=1,up_down=1,count=1010
+# clk=1,reset=1,up_down=1,count=1011
+# clk=0,reset=1,up_down=1,count=1011
+# clk=1,reset=1,up_down=1,count=1100
+# clk=0,reset=1,up_down=1,count=1100
+# clk=1,reset=1,up_down=1,count=1101
+# clk=0,reset=1,up_down=1,count=1101
+# clk=1,reset=1,up_down=1,count=1110
+# clk=0,reset=1,up_down=1,count=1110
+# clk=1,reset=1,up_down=1,count=1111
+# clk=0,reset=1,up_down=1,count=1111
+# clk=1,reset=1,up_down=1,count=0000
+# clk=0,reset=1,up_down=1,count=0000
+# clk=1,reset=1,up_down=1,count=0001
+# clk=0,reset=1,up_down=1,count=0001
+# clk=1,reset=1,up_down=1,count=0010
+# clk=0,reset=1,up_down=1,count=0010
+# clk=1,reset=1,up_down=1,count=0011
+# clk=0,reset=1,up_down=1,count=0011
+# clk=1,reset=1,up_down=1,count=0100
+# clk=0,reset=1,up_down=0,count=0100
+# clk=1,reset=1,up_down=0,count=0011
+# clk=0,reset=1,up_down=0,count=0011
+# clk=1,reset=1,up_down=0,count=0010
+# clk=0,reset=1,up_down=0,count=0010
+# clk=1,reset=1,up_down=0,count=0001
+# clk=0,reset=1,up_down=0,count=0001
+# clk=1,reset=1,up_down=0,count=0000
+# clk=0,reset=1,up_down=0,count=0000
+# clk=1,reset=1,up_down=0,count=1111
+# clk=0,reset=1,up_down=0,count=1111
+# clk=1,reset=1,up_down=0,count=1110
+# clk=0,reset=1,up_down=0,count=1110
+# clk=1,reset=1,up_down=0,count=1101
+# clk=0,reset=1,up_down=0,count=1101
+# clk=1,reset=0,up_down=0,count=1111
+# clk=0,reset=1,up_down=0,count=1111
+# clk=1,reset=1,up_down=0,count=1110
+# clk=0,reset=1,up_down=0,count=1110
+# clk=1,reset=1,up_down=0,count=1101
+# clk=0,reset=1,up_down=0,count=1101
+# clk=1,reset=1,up_down=0,count=1100
+# clk=0,reset=1,up_down=0,count=1100
+# clk=1,reset=1,up_down=0,count=1011
+# clk=0,reset=1,up_down=0,count=1011
+# clk=1,reset=1,up_down=0,count=1010
+# clk=0,reset=1,up_down=0,count=1010
+# clk=1,reset=1,up_down=0,count=1001
+# clk=0,reset=1,up_down=0,count=1001
+# clk=1,reset=1,up_down=0,count=1000
+# clk=0,reset=1,up_down=0,count=1000
+# clk=1,reset=1,up_down=0,count=0111
+# clk=0,reset=1,up_down=0,count=0111
+# clk=1,reset=1,up_down=0,count=0110
+# clk=0,reset=1,up_down=0,count=0110
+# clk=1,reset=1,up_down=0,count=0101
+# clk=0,reset=1,up_down=0,count=0101
+# clk=1,reset=1,up_down=0,count=0100
+# clk=0,reset=1,up_down=0,count=0100
+# clk=1,reset=1,up_down=0,count=0011
+# clk=0,reset=1,up_down=0,count=0011
+# clk=1,reset=1,up_down=0,count=0010
+# clk=0,reset=1,up_down=0,count=0010
+# clk=1,reset=1,up_down=0,count=0001
+# clk=0,reset=1,up_down=0,count=0001
+# clk=1,reset=1,up_down=0,count=0000
+# clk=0,reset=1,up_down=0,count=0000
+# clk=1,reset=1,up_down=0,count=1111
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+
+
+  
+

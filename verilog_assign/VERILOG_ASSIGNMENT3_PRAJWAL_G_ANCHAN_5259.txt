@@ -1,0 +1,596 @@
+1)
+`timescale 1ps/1ps
+module dutycycle;
+  reg clk;
+  always
+    #5 clk=~clk;
+  initial begin
+    clk=1'b0;
+    $dumpfile("dump.vcd");
+    $dumpvars;
+  end
+endmodule:dutycycle
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+2)
+B. BASIC GATES
+Assignment:
+1. Write a Verilog code to simulate
+a. NOT gate (a is the input, y is the output)
+b. OR gate (dataflow modeling)
+c. AND gate (gate level modeling)
+d. NAND gate (dataflow modeling)
+e. NOR gate (dataflow modeling)
+f. XOR gate (gate level modeling)
+g. XNOR gate (gate level modeling)
+
+where a, b are 1 bit inputs and y is a 1 bit output. Write the testbench code for all the gates and give appropriate inputs to test all possible
+combinations.
+
+Program:-
+
+Design:-
+
+module gates(a, b, y);
+  input a, b;
+  output [6:0] y;
+  
+  assign y[0] = ~a;
+  assign y[1] = a | b;
+  and(y[2], a, b);
+  assign y[3] = ~(a & b);
+  assign y[4] = ~(a | b);
+  xor(y[5], a, b);
+  xnor(y[6], a, b);
+  
+endmodule
+
+
+Testbench:-
+
+module gates_tb;
+  reg a, b;
+  wire [6:0] y;
+  
+  gates dut(a, b, y);
+  
+  initial begin
+    $monitor("~ %b = %b\n%b | %b = %b\n%b & %b = %b\n~(%b & %b) = %b\n~(%b | %b) = %b\n%b ^ %b = %b\n~(%b ^ %b) = %b\n", a, y[0], a, b, y[1], a, b, y[2], a, b, y[3], a, b, y[4], a, b, y[5], a, b, y[6]);
+    a = 0;
+    b = 0;
+    #1
+    a = 0;
+    b = 1;
+    #1
+    a = 1;
+    b = 0;
+    #1
+    a = 1;
+    b = 1;
+  end
+endmodule
+
+Output:-
+~ 0 = 1
+0 | 0 = 0
+0 & 0 = 0
+~(0 & 0) = 1
+~(0 | 0) = 1
+0 ^ 0 = 0
+~(0 ^ 0) = 1
+
+~ 0 = 1
+0 | 1 = 1
+0 & 1 = 0
+~(0 & 1) = 1
+~(0 | 1) = 0
+0 ^ 1 = 1
+~(0 ^ 1) = 0
+
+~ 1 = 0
+1 | 0 = 1
+1 & 0 = 0
+~(1 & 0) = 1
+~(1 | 0) = 0
+1 ^ 0 = 1
+~(1 ^ 0) = 0
+
+~ 1 = 0
+1 | 1 = 1
+1 & 1 = 1
+~(1 & 1) = 0
+~(1 | 1) = 0
+1 ^ 1 = 0
+~(1 ^ 1) = 1
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+3)
+design:
+module mux_2_1_dataflow(i1,i2,sel,out);
+  input i1,i2,sel;
+  output reg out;
+  assign out=sel?i2:i1;
+endmodule : mux_2_1_dataflow
+
+testbench:
+`timescale 1ns/1ns
+module mux_2_1_dataflow_tb;
+  reg i1,i2,sel;
+  wire out;
+  mux_2_1_dataflow dut(i1,i2,sel,out);
+  initial begin
+    $monitor("mux output for select line %b and input1 %b input2 %b is = %b",sel,i1,i2,out);
+    sel=1'b0;i2=1'b1;i1=1'b0;
+    #1 i1=1'b1;i2=1'b0;sel=1'b0;
+    #1 sel=1'b1;
+    #1 $finish;
+  end
+endmodule
+output:
+# mux output for select line 0 and input1 0 input2 1 is = 0
+# mux output for select line 0 and input1 1 input2 0 is = 1
+# mux output for select line 1 and input1 1 input2 0 is = 0
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4)
+
+design:
+module mux_4_1(i,sel,out);
+  input [3:0] i;
+  input [1:0] sel;
+  output reg out;
+  always@(*)
+    begin
+      case(sel)
+        2'b00:out=i[0];
+        2'b01:out=i[1];
+        2'b10:out=i[2];
+        2'b11:out=i[3];
+      endcase
+    end
+endmodule : mux_4_1
+
+testbench:
+
+`timescale 1ns/1ns
+module mux_4_1_tb;
+  reg [3:0]i;
+  reg [1:0]sel;
+  wire out;
+  mux_4_1 dut(i,sel,out);
+  initial begin
+    $monitor("for select line %b and input %b output is=%b",sel,i,out);
+    i=4'b0000;sel=2'b00;
+    #1 i=4'b0001;sel=2'b00;
+    #1 i=4'b0010;sel=2'b01;
+    #1 i=4'b0100;sel=2'b10;
+    #1 i=4'b1000;sel=2'b11;
+    #1 i=4'b1110;sel=2'b00;
+    #1 i=4'b1101;sel=2'b01;
+    #1 i=4'b1011;sel=2'b10;
+    #1 i=4'b0111;sel=2'b11;
+    #1 $finish;
+  end
+endmodule
+
+output:
+run -all
+# for select line 00 and input 0000 output is=0
+# for select line 00 and input 0001 output is=1
+# for select line 01 and input 0010 output is=1
+# for select line 10 and input 0100 output is=1
+# for select line 11 and input 1000 output is=1
+# for select line 00 and input 1110 output is=0
+# for select line 01 and input 1101 output is=0
+# for select line 10 and input 1011 output is=0
+# for select line 11 and input 0111 output is=0
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5)
+design:
+module mux_2_1(i1,i2,sel,out);
+  input i1,i2,sel;
+  output reg out;
+  assign out=sel?i2:i1;
+endmodule : mux_2_1
+module mux_4_1(i,sel,out);
+  input [3:0] i;
+  input [1:0] sel;
+  output reg out;
+  wire mux1,mux2;
+  mux_2_1 mux_1(i[0],i[1],sel[0],mux1);
+  mux_2_1 mux_2(i[2],i[3],sel[0],mux2);
+  mux_2_1 mux_3(mux1,mux2,sel[1],out);
+endmodule : mux_4_1
+
+testbench:
+`timescale 1ns/1ns
+module mux_4_1_tb;
+  reg [3:0]i;
+  reg [1:0]sel;
+  wire out;
+  mux_4_1 dut(i,sel,out);
+  initial begin
+    $monitor("for select line %b and input %b output is=%b",sel,i,out);
+    i=4'b0000;sel=2'b00;
+    #1 i=4'b0001;sel=2'b00;
+    #1 i=4'b0010;sel=2'b01;
+    #1 i=4'b0100;sel=2'b10;
+    #1 i=4'b1000;sel=2'b11;
+    #1 i=4'b1110;sel=2'b00;
+    #1 i=4'b1101;sel=2'b01;
+    #1 i=4'b1011;sel=2'b10;
+    #1 i=4'b0111;sel=2'b11;
+    #1 $finish;
+  end
+  initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+end
+
+endmodule
+
+output:
+run 15ns
+# for select line 00 and input 0000 output is=0
+# for select line 00 and input 0001 output is=1
+# for select line 01 and input 0010 output is=1
+# for select line 10 and input 0100 output is=1
+# for select line 11 and input 1000 output is=1
+# for select line 00 and input 1110 output is=0
+# for select line 01 and input 1101 output is=0
+# for select line 10 and input 1011 output is=0
+# for select line 11 and input 0111 output is=0
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+6)
+design:
+module encoder_4_2(din,dout);
+  input [3:0] din;
+  output reg [1:0] dout;
+  always@(*)
+    begin
+      case(din)
+        4'b0001:dout=2'b00;
+        4'b0010:dout=2'b01;
+        4'b0100:dout=2'b10;
+        4'b1000:dout=2'b11;
+        default:dout=2'b00;
+      endcase
+    end
+endmodule : encoder_4_2
+
+testbench:
+`timescale 1ns/1ns
+module encoder_4_2_tb;
+  reg [3:0] din;
+  wire [1:0] dout;
+  encoder_4_2 dut(din,dout);
+  initial begin
+    $monitor("output for input %b = %b",din,dout);
+    din=4'b0000;
+    #1 din=4'b0001;
+    #1 din=4'b0010;
+    #1 din=4'b0100;
+    #1 din=4'b1000;
+    #1 $finish;
+  end
+    initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+end
+    endmodule:encoder_4_2_tb
+    
+ output:
+# run 10ns
+# output for input 0000 = 00
+# output for input 0001 = 00
+# output for input 0010 = 01
+# output for input 0100 = 10
+# output for input 1000 = 11
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+7)
+design:
+module decoder_2_4(a,b,dout,en);
+  input  a,b;
+  input en;
+  output reg [3:0] dout;
+  always@(*)
+    begin
+      if(en)
+        begin
+          dout[0]=(~a)&(~b);
+          dout[1]=(~a)&(b);
+          dout[2]=(a)&(~b);
+          dout[3]=(a)&(b);
+        end
+      else
+        dout=4'b0000;
+    end
+endmodule : decoder_2_4
+
+testbench:
+`timescale 1ns/1ns
+module decoder_2_4_tb;
+  reg  a,b;
+  reg en;
+  wire [3:0] dout;
+  decoder_4_2 dut(a,b,dout,en);
+  initial begin
+    $monitor("output for input %b%b with enable %b = %b",a,b,en,dout);
+    a=1'b0;b=1'b0;en=1'b0;
+    #1 en=1'b1;a=1'b0;b=1'b0;
+    #1 en=1'b1;a=1'b0;b=1'b1;
+    #1 en=1'b0;a=1'b1;b=1'b0;
+    #1 en=1'b1;a=1'b1;b=1'b0;
+    #1 en=1'b0;a=1'b1;b=1'b1;
+    #1 en=1'b1;a=1'b1;b=1'b1;
+    #1 $finish;
+  end
+    initial begin
+$dumpfile("dump.vcd");
+$dumpvars;
+end
+    endmodule:decoder_2_4_tb
+
+output:
+# run -all
+# output for input 00 with enable 0 = 0000
+# output for input 00 with enable 1 = 0001
+# output for input 01 with enable 1 = 0010
+# output for input 10 with enable 0 = 0000
+# output for input 10 with enable 1 = 0100
+# output for input 11 with enable 0 = 0000
+# output for input 11 with enable 1 = 1000
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+8)
+design:
+module mux_8_1(i,sel,out);
+  input [7:0] i;
+  input [2:0] sel;
+  output reg out;
+  always@(*)
+    begin
+      case(sel)
+        3'b000:out=i[0];
+        3'b001:out=i[1];
+        3'b010:out=i[2];
+        3'b011:out=i[3];
+        3'b100:out=i[4];
+        3'b101:out=i[5];
+        3'b110:out=i[6];
+        3'b111:out=i[7];
+      endcase
+    end
+endmodule : mux_8_1
+
+testbench:
+`timescale 1ns/1ns
+module mux_8_1_tb;
+  reg [7:0]i;
+  reg [2:0]sel;
+  wire out;
+  mux_8_1 dut(i,sel,out);
+  initial begin
+    $monitor("for select line %b and input %b output is=%b",sel,i,out);
+    i=8'b0000;sel=3'b000;
+    #1 i=8'b00000001;sel=3'b000;
+    #1 i=8'b00000010;sel=3'b001;
+    #1 i=8'b00000100;sel=3'b010;
+    #1 i=8'b00001000;sel=3'b011;
+    #1 i=8'b00010000;sel=3'b100;
+    #1 i=8'b00100000;sel=3'b101;
+    #1 i=8'b01000000;sel=3'b110;
+    #1 i=8'b10000000;sel=3'b111;
+    #1 $finish;
+  end
+endmodule
+
+output:
+# run -all
+# for select line 000 and input 00000000 output is=0
+# for select line 000 and input 00000001 output is=1
+# for select line 001 and input 00000010 output is=1
+# for select line 010 and input 00000100 output is=1
+# for select line 011 and input 00001000 output is=1
+# for select line 100 and input 00010000 output is=1
+# for select line 101 and input 00100000 output is=1
+# for select line 110 and input 01000000 output is=1
+# for select line 111 and input 10000000 output is=1
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+9)
+design:
+module encoder_8_3(i,out);
+  input [7:0] i;
+  output reg [2:0] out;
+  always@(*)
+    begin
+      case(i)
+        8'b00000001:out=3'b000;
+        8'b00000010:out=3'b001;
+        8'b00000100:out=3'b010;
+        8'b00001000:out=3'b011;
+        8'b00010000:out=3'b100;
+        8'b00100000:out=3'b101;
+        8'b01000000:out=3'b110;
+        8'b10000000:out=3'b111;
+      endcase
+    end
+endmodule : encoder_8_3
+
+testbench:
+`timescale 1ns/1ns
+module encoder_8_3_tb;
+  reg [7:0]i;
+  wire [2:0] out;
+  encoder_8_3 dut(i,out);
+  initial begin
+    $monitor("input %b output is=%b",i,out);
+    i=8'b0000;
+    #1 i=8'b00000001;
+    #1 i=8'b00000010;
+    #1 i=8'b00000100;
+    #1 i=8'b00001000;
+    #1 i=8'b00010000;
+    #1 i=8'b00100000;
+    #1 i=8'b01000000;
+    #1 i=8'b10000000;
+    #1 $finish;
+  end
+endmodule
+
+output:
+# run -all
+# input 00000000 output is=xxx
+# input 00000001 output is=000
+# input 00000010 output is=001
+# input 00000100 output is=010
+# input 00001000 output is=011
+# input 00010000 output is=100
+# input 00100000 output is=101
+# input 01000000 output is=110
+# input 10000000 output is=111
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10)
+module decoder_3_8(i,out);
+  input [2:0] i;
+  output reg [7:0] out;
+  always@(*)
+    begin
+      case(i)
+        3'b000:out=8'b00000001;
+        3'b001:out=8'b00000010;
+        3'b010:out=8'b00000100;
+        3'b011:out=8'b00001000;
+        3'b100:out=8'b00010000;
+        3'b101:out=8'b00100000;
+        3'b110:out=8'b01000000;
+        3'b111:out=8'b10000000;
+      endcase
+    end
+endmodule : decoder_3_8
+
+testbench:
+`timescale 1ns/1ns
+module decoder_3_8_tb;
+  reg [2:0]i;
+  wire [7:0] out;
+  decoder_3_8 dut(i,out);
+  initial begin
+    $monitor("input %b output is = %b",i,out);
+    i=3'b000;
+    #1 i=8'b000;
+    #1 i=8'b001;
+    #1 i=8'b010;
+    #1 i=8'b011;
+    #1 i=8'b100;
+    #1 i=8'b101;
+    #1 i=8'b110;
+    #1 i=8'b111;
+    #1 $finish;
+  end
+endmodule
+
+output:
+# run -all
+# input 000 output is = 00000001
+# input 001 output is = 00000010
+# input 010 output is = 00000100
+# input 011 output is = 00001000
+# input 100 output is = 00010000
+# input 101 output is = 00100000
+# input 110 output is = 01000000
+# input 111 output is = 10000000
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+11)
+design:
+module swap;
+  integer var1,var2;
+  initial begin
+    var1=10;var2=5;
+    var1<=var2;
+    var2<=var1;
+    $monitor("after swapping %0d,%0d",var1,var2);
+  end
+endmodule
+
+output:
+# run -all
+# after swapping 5,10
+# exit
+
+module swap_temp;
+  integer temp,var1=10,var2=20;
+  initial begin
+    temp=var1;
+    var1=var2;
+    var2=temp;
+    $monitor("after swapping using third variable %0d,%0d",var1,var2);
+      end
+   endmodule
+output:
+# run -all
+# after swapping using third variable 20,10
+# exit
+
+
+12)manual 1 question
+
+`timescale 100ps/10ps
+module time_literals ();
+time a;
+initial begin
+$monitor ("@ %g a = %t", $time, a);
+#1 a = 1ns;
+#1 a = 0.2ns;
+#1 a = 300ps;
+#1 $finish; end
+endmodule
+
+output:
+# run -all
+# @ 0 a =                    0
+# @ 1 a =                  100
+# @ 2 a =                   20
+# @ 3 a =                   30
+
+13) manual 2 question
+
+`timescale 100ps/1ps
+module realtimedata;
+time var1;
+initial
+begin
+$monitor("time= ", $time, "\t var1 = %d",var1, "\t realtime =", $realtime, "\t var1=%d",var1);
+#0 var1 = 0;
+#2.2 var1 = 1;
+#3.75 var1 = 0;
+#4.43 var1 = 1;
+end
+endmodule
+
+output:
+# run -all
+# time=                    0	 var1 =                    0	 realtime =0	 var1=                   0
+# time=                    2	 var1 =                    1	 realtime =2.2	 var1=                   1
+# time=                    6	 var1 =                    0	 realtime =5.95	 var1=                   0
+# time=                   10 var1 =                    1	 realtime =10.38	 var1=                   1
+# exit
+
+
+
+
+

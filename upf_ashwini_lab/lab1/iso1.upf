@@ -1,0 +1,66 @@
+#This lab is about isolation strategy missing in UPF; isolation cells are instantiated in the design.
+
+#-----------------------------------------------------------------------------------------
+
+# Domain pd_top
+#-----------------------------------------------------------------------------------------
+create_power_domain pd_top  -include_scope
+create_supply_net   vdd    -domain pd_top
+create_supply_port  vdd    -direction in
+connect_supply_net  vdd    -ports vdd
+create_supply_net   vss    -domain pd_top
+create_supply_port  vss    -direction in
+connect_supply_net  vss    -ports vss
+add_port_state vdd  -state {HV  1.32}
+add_port_state vdd  -state {OFF off}
+add_port_state vss  -state {ZV  0.0}
+set_domain_supply_net pd_top -primary_power_net vdd  -primary_ground_net vss
+
+# Domain pd_low
+#-----------------------------------------------------------------------------------------
+create_power_domain pd_low    -elements i_low1
+# vdd_low
+create_supply_net   vdd_low   -domain pd_low
+create_supply_port  vdd_low   -direction in
+connect_supply_net  vdd_low   -ports vdd_low
+add_port_state vdd_low -state {HV  1.32}
+add_port_state vdd_low -state {OFF off}
+# primaries
+create_supply_net   vdd    -domain pd_low  -reuse
+create_supply_net   vss    -domain pd_low  -reuse
+set_domain_supply_net pd_low   -primary_power_net vdd_low -primary_ground_net vss
+
+# Domain pd_sh
+#-----------------------------------------------------------------------------------------
+create_power_domain pd_sh    -elements i_shutdown_with_iso_cells
+create_supply_net   vdd_sh   -domain pd_sh
+create_supply_port  vdd_sh   -direction in
+connect_supply_net  vdd_sh   -ports vdd_sh
+create_supply_net   vdd    -domain pd_sh  -reuse
+create_supply_net   vss    -domain pd_sh  -reuse
+add_port_state vdd_sh -state {HV  1.32}
+add_port_state vdd_sh -state {OFF off}
+set_domain_supply_net pd_sh   -primary_power_net vdd_sh -primary_ground_net vss
+
+# States
+#-----------------------------------------------------------------------------------------
+create_pst my_pst -supplies         {vss vdd    vdd_sh   vdd_low  }
+add_pst_state S1 -pst my_pst -state {ZV  HV       HV         HV      }
+add_pst_state S2 -pst my_pst -state {ZV  HV       OFF        HV     }
+add_pst_state S3 -pst my_pst -state {ZV  OFF      OFF        OFF     }
+
+# Base strategy to isolate outputs of shutdown
+#-----------------------------------------------------------------------------------------
+#set_isolation s_a -domain pd_sh -clamp_value 0 \
+#  -applies_to outputs -isolation_power_net vdd
+#set_isolation_control s_a -domain pd_sh -isolation_signal iso1 \
+#   -location self
+   
+# Special for one output to correctly connect wrong power
+#set_isolation s_a2 -domain pd_sh -clamp_value 0 \
+#   -elements {i_shutdown/i_shutdown[1]} -isolation_power_net vdd
+#set_isolation_control s_a2 -domain pd_sh -isolation_signal iso1 \
+#   -location parent
+
+
+

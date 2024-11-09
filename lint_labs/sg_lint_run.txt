@@ -1,0 +1,47 @@
+new_project AXI4_Lint -f
+
+set path ../rtl 
+
+set_option mthresh 600000
+set_option enableV05 yes
+set_option enableSV09 yes
+#set_option enable_save_restore
+set_option handlememory true
+
+set_option enable_gateslib_autocompile yes
+set_option designread_enable_synthesis yes
+
+
+read_file -type verilog $path/AXI_Master.v
+read_file -type verilog $path/AXI_MASTER_READ_CONTROL.v
+read_file -type verilog $path/AXI_MASTER_WRITE_CONTROL.v
+read_file -type verilog $path/decoder.v
+read_file -type verilog $path/design_fifo.v
+read_file -type verilog $path/sync_fifo.v
+read_file -type verilog $path/Top_Module_AXI4.v
+read_file -type verilog $path/write_response_handler.v
+read_file -type gateslib ../lib/saed32lvt_ss0p7v25c.lib
+
+
+#link_design -alltop
+#Compiling the design
+compile_design
+
+current_goal lint/lint_rtl -alltop
+run_goal
+
+#current_goal lint/lint_rtl_enhanced -alltop
+#run_goal
+
+#current_goal Group_Run -goal {lint/lint_rtl lint/lint_rtl_enhanced} -group_name group1 -alltop
+#run_goal
+
+capture ./summary.rpt {write_report summary}
+capture ./goal_setup.rpt {write_report goal_setup}
+capture ./spyglass_violations.rpt {write_report spyglass_violations}
+capture ./SignalUsageReport.rpt {write_report SignalUsageReport}
+capture ./W415_Report.rpt {write_report W415_Report}
+
+save_project
+
+# exit
