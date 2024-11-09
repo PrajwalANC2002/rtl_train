@@ -1,0 +1,37 @@
+monday 
+morning session
+-basics of low power design and different power reduction techniques
+-special cells used in low power design
+-power switches,isolation cells,level shifters,retention register,always on logic
+
+afternoon session
+-introduction to upf,upf flow,
+-basic concepts of upf explained using an example
+-different components of upf,fuctional vs power intent
+-design vs logic hierarchy 
+-different commands to be used to set the different components in the upf file
+
+tuesday
+morning session
+-identification of different  power domains for a design
+-how to create a upf file and set the for an example design
+-upf power state table,isolation strategy,creating level shifters,create retention registers
+-vclp introduction and its key features
+-how to create vclp.tcl file  
+
+afternoon session
+-we worked on low power labs 
+-In lab1 we worked on isolation type cells with three power domains
+
+wednesday
+morning session
+-in lab2 we worked on isolation type cells with different error but same design as before 
+-in lab3 we worked on isolation type cells with different error but same design as before 
+afternoon session
+-we worked on level shifter labs
+-in lab1 we worked on level shifter labs where we needed to use level shifters for a signal passing between different power domains
+-lab2,lab3,lab4,lab5,lab6 same as lab1(all of them were minor errors)
+-lab4 related to isolation type cells (where she asked us to solve all the 69 errors)
+
+
+
